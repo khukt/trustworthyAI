@@ -11,9 +11,15 @@ st.set_page_config(
     layout="wide",
 )
 
-# Official logo assets (from their official logo pages)
-VINNOVA_LOGO_URL = "https://www.vinnova.se/globalassets/mikrosajter/nyhetsrum/bilder/logotyp/vinnova_green_payoff_eng_rgb.png"
-INTERREG_AURORA_LOGO_URL = "https://www.interregaurora.eu/wp-content/uploads/AURORA-RGB-Color-1-1024x308.png"
+# ----------------------------
+# Project + logo (VINNOVA only)
+# ----------------------------
+PROJECT_URL = "https://www.vinnova.se/en/p/trustworthy-ai-and-mobile-generative-ai-for-6g-networks-and-smart-industry-applications/"
+PROJECT_REF = "2024-03570"
+VINNOVA_LOGO_URL = (
+    "https://www.vinnova.se/globalassets/mikrosajter/nyhetsrum/bilder/logotyp/"
+    "vinnova_green_payoff_eng_rgb.png"
+)
 
 # ----------------------------
 # Data model
@@ -23,7 +29,7 @@ class Demo:
     title: str
     subtitle: str
     url: str
-    tags: list[str]
+    tags: List[str]
     icon: str = "✨"
     status: str = "Live"  # Live / Demo / Beta / Coming Soon
     image_url: Optional[str] = None
@@ -32,7 +38,7 @@ class Demo:
 # ----------------------------
 # Demos (add more later)
 # ----------------------------
-DEMOS: list[Demo] = [
+DEMOS: List[Demo] = [
     Demo(
         title="Wireless Trust AI",
         subtitle="Trustworthy AI for wireless systems — robustness, reliability, and practical evaluation views.",
@@ -43,15 +49,19 @@ DEMOS: list[Demo] = [
     ),
 ]
 
+primary = next((d for d in DEMOS if d.status.lower() == "live"), DEMOS[0])
+
 # ----------------------------
 # Premium styling (Apple-like + Research Lab)
 # ----------------------------
 st.markdown(
     """
 <style>
+/* Layout */
 .block-container { max-width: 1180px; padding-top: 1.0rem; padding-bottom: 2.6rem; }
 header, footer, #MainMenu { visibility: hidden; height: 0px; }
 
+/* Typography */
 html, body, [class*="css"] { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
 h1, h2, h3 { letter-spacing: -0.03em; }
 p { color: rgba(71,85,105,1); }
@@ -59,15 +69,16 @@ p { color: rgba(71,85,105,1); }
 /* Top nav */
 .navbar { display:flex; align-items:center; justify-content:space-between; padding: 6px 0 18px 0; }
 .brand { display:flex; gap:10px; align-items:center; }
-.brand-title { font-weight: 800; font-size: 1.05rem; color: rgba(15,23,42,1); }
+.brand-title { font-weight: 850; font-size: 1.05rem; color: rgba(15,23,42,1); }
 .brand-sub { font-size: 0.92rem; color: rgba(100,116,139,1); margin-top: 1px; }
 
+/* Buttons (HTML) */
 a.btnPrimary {
   display:inline-flex; align-items:center; justify-content:center;
   padding: 10px 14px; border-radius: 12px;
   background: rgba(15,23,42,1);
   border: 1px solid rgba(15,23,42,1);
-  color: white !important; font-weight: 700;
+  color: white !important; font-weight: 750;
   text-decoration: none !important;
 }
 a.btnPrimary:hover { opacity: 0.93; }
@@ -77,7 +88,7 @@ a.btnSoft {
   padding: 10px 14px; border-radius: 12px;
   background: rgba(15,23,42,0.04);
   border: 1px solid rgba(148,163,184,0.28);
-  color: rgba(15,23,42,1) !important; font-weight: 700;
+  color: rgba(15,23,42,1) !important; font-weight: 750;
   text-decoration: none !important;
 }
 a.btnSoft:hover { background: rgba(15,23,42,0.06); }
@@ -107,7 +118,7 @@ a.btnSoft:hover { background: rgba(15,23,42,0.06); }
 }
 
 /* Section */
-.sectionTitle { margin-top: 30px; margin-bottom: 8px; font-size: 1.35rem; font-weight: 850; color: rgba(15,23,42,1); }
+.sectionTitle { margin-top: 30px; margin-bottom: 8px; font-size: 1.35rem; font-weight: 880; color: rgba(15,23,42,1); }
 .sectionSub { margin-top: 0; margin-bottom: 14px; color: rgba(100,116,139,1); }
 
 /* Cards */
@@ -134,7 +145,7 @@ a.btnSoft:hover { background: rgba(15,23,42,0.06); }
   border: 1px solid rgba(16,185,129,0.35);
   background: rgba(16,185,129,0.12);
   color: rgba(15,23,42,1);
-  font-weight: 800;
+  font-weight: 850;
 }
 .tag {
   display:inline-block;
@@ -147,7 +158,7 @@ a.btnSoft:hover { background: rgba(15,23,42,0.06); }
   color: rgba(30,41,59,1);
 }
 
-/* Metrics strip */
+/* Metrics */
 .metric {
   border-radius: 18px;
   padding: 14px 14px 12px 14px;
@@ -156,17 +167,6 @@ a.btnSoft:hover { background: rgba(15,23,42,0.06); }
 }
 .metricK { font-weight: 900; color: rgba(15,23,42,1); font-size: 1.05rem; }
 .metricV { color: rgba(100,116,139,1); font-size: 0.92rem; margin-top: 2px; }
-
-/* Partners strip */
-.partners {
-  border-radius: 18px;
-  padding: 14px 16px;
-  border: 1px solid rgba(148,163,184,0.20);
-  background: rgba(255,255,255,0.85);
-}
-.partnerRow { display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap; }
-.partnerLabel { font-weight: 850; color: rgba(15,23,42,1); }
-.partnerNote { color: rgba(100,116,139,1); font-size: 0.92rem; }
 
 /* Demo grid */
 .gridcard {
@@ -180,27 +180,51 @@ a.btnSoft:hover { background: rgba(15,23,42,0.06); }
 .gridTitle { font-weight: 900; color: rgba(15,23,42,1); }
 .gridSub { color: rgba(100,116,139,1); font-size: 0.92rem; margin-top: 4px; }
 
-/* Footer */
-.footerline {
-  margin-top: 34px;
-  padding-top: 16px;
+/* Funding block (clean, neutral, no "card UI") */
+.fundingWrap {
+  margin-top: 46px;
+  padding-top: 18px;
   border-top: 1px solid rgba(148,163,184,0.22);
+}
+.fundingTitle {
+  text-align: center;
+  font-weight: 880;
+  color: rgba(15,23,42,1);
+  font-size: 1.02rem;
+}
+.fundingText {
+  text-align: center;
+  margin-top: 6px;
   color: rgba(100,116,139,1);
   font-size: 0.92rem;
+}
+.fundingLink a {
+  color: rgba(15,23,42,1);
+  font-weight: 800;
+  text-decoration: none !important;
+}
+.fundingLink a:hover { opacity: 0.92; }
+
+/* Footer */
+.footerline {
+  margin-top: 26px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(148,163,184,0.18);
+  color: rgba(100,116,139,1);
+  font-size: 0.92rem;
+  text-align: center;
 }
 </style>
 """,
     unsafe_allow_html=True,
 )
 
-def tags_html(tags: list[str]) -> str:
+def tags_html(tags: List[str]) -> str:
     return "".join([f"<span class='tag'>{t}</span>" for t in tags])
-
 
 # ----------------------------
 # Navbar
 # ----------------------------
-primary = next((d for d in DEMOS if d.status.lower() == "live"), DEMOS[0])
 st.markdown(
     f"""
 <div class="navbar">
@@ -208,7 +232,7 @@ st.markdown(
     <div style="font-size:1.25rem;">🛡️</div>
     <div>
       <div class="brand-title">Trustworthy AI Showcases</div>
-      <div class="brand-sub">Apple-modern demo hub • Research & industry ready</div>
+      <div class="brand-sub">Modern demo hub • Research & industry ready</div>
     </div>
   </div>
   <div style="display:flex; gap:10px; align-items:center;">
@@ -244,7 +268,7 @@ st.markdown(
 )
 
 # ----------------------------
-# Research-lab metrics strip
+# Metrics strip
 # ----------------------------
 st.markdown("<div class='sectionTitle'>At a glance</div>", unsafe_allow_html=True)
 m1, m2, m3, m4 = st.columns(4)
@@ -253,43 +277,9 @@ with m1:
 with m2:
     st.markdown("<div class='metric'><div class='metricK'>Focus</div><div class='metricV'>Trust • Robustness • Security</div></div>", unsafe_allow_html=True)
 with m3:
-    st.markdown("<div class='metric'><div class='metricK'>Domain</div><div class='metricV'>Wireless / 6G & IIoT</div></div>", unsafe_allow_html=True)
+    st.markdown("<div class='metric'><div class='metricK'>Domain</div><div class='metricV'>Wireless / 6G & Smart industry</div></div>", unsafe_allow_html=True)
 with m4:
     st.markdown("<div class='metric'><div class='metricK'>Format</div><div class='metricV'>Interactive Streamlit apps</div></div>", unsafe_allow_html=True)
-
-# ----------------------------
-# Partners & funding (logos only)
-# ----------------------------
-st.markdown("<div class='sectionTitle'>Partners & funding</div>", unsafe_allow_html=True)
-st.markdown("<div class='sectionSub'>Logos shown in official form, intended for light backgrounds.</div>", unsafe_allow_html=True)
-
-st.markdown(
-    """
-<div class="partners">
-  <div class="partnerRow">
-    <div>
-      <div class="partnerLabel">Supported by</div>
-      <div class="partnerNote">Funding and programme acknowledgement</div>
-    </div>
-  </div>
-</div>
-""",
-    unsafe_allow_html=True,
-)
-
-# Two-logo row with balanced sizing
-lcol1, lcol2, lcol3 = st.columns([1.2, 1.2, 2.0])
-with lcol1:
-    st.image(VINNOVA_LOGO_URL, width=240)
-with lcol2:
-    st.image(INTERREG_AURORA_LOGO_URL, width=260)
-with lcol3:
-    st.markdown(
-        "<div class='cardFlat'><b>Note</b><div class='gridSub' style='margin-top:6px;'>"
-        "This hub will list additional partners as new demos are added."
-        "</div></div>",
-        unsafe_allow_html=True,
-    )
 
 # ----------------------------
 # Featured demo
@@ -387,42 +377,31 @@ for i, demo in enumerate(filtered):
         )
         st.link_button("Open →", demo.url, use_container_width=True)
 
-
 # ----------------------------
-# Funding acknowledgement (VINNOVA only) — place near bottom
+# Funding acknowledgement (VINNOVA only) — clean + professional
 # ----------------------------
-PROJECT_URL = "https://www.vinnova.se/en/p/trustworthy-ai-and-mobile-generative-ai-for-6g-networks-and-smart-industry-applications/"
-PROJECT_REF = "2024-03570"
-
 st.markdown(
-    """
-    <div style="margin-top:42px; padding-top:18px; border-top:1px solid rgba(148,163,184,0.22);">
-      <div style="text-align:center;">
-        <div style="font-weight:800; color: rgba(15,23,42,1); font-size:1.0rem;">
-          Funding acknowledgement
-        </div>
-        <div style="margin-top:6px; color: rgba(100,116,139,1); font-size:0.92rem;">
-          This demo hub is supported by VINNOVA (Sweden’s Innovation Agency). Project reference: <b>2024-03570</b>.
-        </div>
-      </div>
-    </div>
-    """,
+    f"""
+<div class="fundingWrap">
+  <div class="fundingTitle">Funding acknowledgement</div>
+  <div class="fundingText">
+    This demo hub is supported by VINNOVA (Sweden’s Innovation Agency). Project reference: <b>{PROJECT_REF}</b>.
+  </div>
+</div>
+""",
     unsafe_allow_html=True,
 )
 
-# Centered logo (no card, no border)
 c1, c2, c3 = st.columns([1, 2, 1])
 with c2:
     st.image(VINNOVA_LOGO_URL, width=320)
 
 st.markdown(
     f"""
-    <div style="text-align:center; margin-top:10px; font-size:0.88rem; color: rgba(100,116,139,1);">
-      <a href="{PROJECT_URL}" target="_blank" style="color: rgba(15,23,42,1); font-weight:700; text-decoration:none;">
-        View the official VINNOVA project page →
-      </a>
-    </div>
-    """,
+<div class="fundingText fundingLink" style="margin-top:10px;">
+  <a href="{PROJECT_URL}" target="_blank">View the official VINNOVA project page →</a>
+</div>
+""",
     unsafe_allow_html=True,
 )
 
@@ -432,8 +411,7 @@ st.markdown(
 st.markdown(
     """
 <div class="footerline">
-  Maintained by Mid Sweden University • Trustworthy AI Demo Hub<br/>
-  Contact: kyi.thar@miun.se
+  Maintained by Mid Sweden University • Trustworthy AI Demo Hub • Contact: kyi.thar@miun.se
 </div>
 """,
     unsafe_allow_html=True,
