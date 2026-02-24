@@ -11,21 +11,28 @@ st.set_page_config(
     layout="wide",
 )
 
-# Official VINNOVA logo (English version) from VINNOVA newsroom assets
+# Official logo assets (from their official logo pages)
 VINNOVA_LOGO_URL = "https://www.vinnova.se/globalassets/mikrosajter/nyhetsrum/bilder/logotyp/vinnova_green_payoff_eng_rgb.png"
+INTERREG_AURORA_LOGO_URL = "https://www.interregaurora.eu/wp-content/uploads/AURORA-RGB-Color-1-1024x308.png"
 
+# ----------------------------
+# Data model
+# ----------------------------
 @dataclass
 class Demo:
     title: str
     subtitle: str
     url: str
-    tags: List[str]
+    tags: list[str]
     icon: str = "✨"
     status: str = "Live"  # Live / Demo / Beta / Coming Soon
-    image_url: Optional[str] = None  # optional banner image
+    image_url: Optional[str] = None
 
 
-DEMOS: List[Demo] = [
+# ----------------------------
+# Demos (add more later)
+# ----------------------------
+DEMOS: list[Demo] = [
     Demo(
         title="Wireless Trust AI",
         subtitle="Trustworthy AI for wireless systems — robustness, reliability, and practical evaluation views.",
@@ -33,7 +40,6 @@ DEMOS: List[Demo] = [
         tags=["Wireless AI", "6G", "Robustness", "Trustworthiness"],
         icon="📡",
         status="Live",
-        image_url=None,
     ),
 ]
 
@@ -43,11 +49,9 @@ DEMOS: List[Demo] = [
 st.markdown(
     """
 <style>
-/* Page layout */
 .block-container { max-width: 1180px; padding-top: 1.0rem; padding-bottom: 2.6rem; }
 header, footer, #MainMenu { visibility: hidden; height: 0px; }
 
-/* Typography */
 html, body, [class*="css"] { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
 h1, h2, h3 { letter-spacing: -0.03em; }
 p { color: rgba(71,85,105,1); }
@@ -58,7 +62,6 @@ p { color: rgba(71,85,105,1); }
 .brand-title { font-weight: 800; font-size: 1.05rem; color: rgba(15,23,42,1); }
 .brand-sub { font-size: 0.92rem; color: rgba(100,116,139,1); margin-top: 1px; }
 
-/* Buttons (HTML) */
 a.btnPrimary {
   display:inline-flex; align-items:center; justify-content:center;
   padding: 10px 14px; border-radius: 12px;
@@ -93,7 +96,6 @@ a.btnSoft:hover { background: rgba(15,23,42,0.06); }
 .hero h1 { margin: 0; font-size: 2.7rem; line-height: 1.07; color: rgba(15,23,42,1); }
 .hero p { margin: 12px 0 0 0; font-size: 1.06rem; max-width: 56rem; }
 
-/* Pills */
 .pills { margin-top: 18px; display:flex; flex-wrap:wrap; gap:10px; }
 .pill {
   display:inline-flex; gap:8px; align-items:center;
@@ -108,7 +110,7 @@ a.btnSoft:hover { background: rgba(15,23,42,0.06); }
 .sectionTitle { margin-top: 30px; margin-bottom: 8px; font-size: 1.35rem; font-weight: 850; color: rgba(15,23,42,1); }
 .sectionSub { margin-top: 0; margin-bottom: 14px; color: rgba(100,116,139,1); }
 
-/* Premium cards */
+/* Cards */
 .card {
   border-radius: 20px;
   padding: 18px 18px 16px 18px;
@@ -155,18 +157,18 @@ a.btnSoft:hover { background: rgba(15,23,42,0.06); }
 .metricK { font-weight: 900; color: rgba(15,23,42,1); font-size: 1.05rem; }
 .metricV { color: rgba(100,116,139,1); font-size: 0.92rem; margin-top: 2px; }
 
-/* Partners strip (no logo effects, clean background) */
+/* Partners strip */
 .partners {
   border-radius: 18px;
   padding: 14px 16px;
   border: 1px solid rgba(148,163,184,0.20);
   background: rgba(255,255,255,0.85);
 }
-.partnerRow { display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
-.partnerLabel { font-weight: 800; color: rgba(15,23,42,1); margin-right: 6px; }
+.partnerRow { display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap; }
+.partnerLabel { font-weight: 850; color: rgba(15,23,42,1); }
 .partnerNote { color: rgba(100,116,139,1); font-size: 0.92rem; }
 
-/* Demo grid cards */
+/* Demo grid */
 .gridcard {
   border-radius: 18px;
   padding: 16px;
@@ -191,7 +193,7 @@ a.btnSoft:hover { background: rgba(15,23,42,0.06); }
     unsafe_allow_html=True,
 )
 
-def tags_html(tags: List[str]) -> str:
+def tags_html(tags: list[str]) -> str:
     return "".join([f"<span class='tag'>{t}</span>" for t in tags])
 
 
@@ -206,7 +208,7 @@ st.markdown(
     <div style="font-size:1.25rem;">🛡️</div>
     <div>
       <div class="brand-title">Trustworthy AI Showcases</div>
-      <div class="brand-sub">Professional demo hub • Research & industry ready</div>
+      <div class="brand-sub">Apple-modern demo hub • Research & industry ready</div>
     </div>
   </div>
   <div style="display:flex; gap:10px; align-items:center;">
@@ -256,29 +258,41 @@ with m4:
     st.markdown("<div class='metric'><div class='metricK'>Format</div><div class='metricV'>Interactive Streamlit apps</div></div>", unsafe_allow_html=True)
 
 # ----------------------------
-# Partners strip (VINNOVA logo)
+# Partners & funding (logos only)
 # ----------------------------
 st.markdown("<div class='sectionTitle'>Partners & funding</div>", unsafe_allow_html=True)
-st.markdown("<div class='sectionSub'>Selected organisations supporting or connected to the showcased work.</div>", unsafe_allow_html=True)
+st.markdown("<div class='sectionSub'>Logos shown in official form, intended for light backgrounds.</div>", unsafe_allow_html=True)
 
-st.markdown("<div class='partners'><div class='partnerRow'>"
-            "<span class='partnerLabel'>Supported by</span>"
-            "<span class='partnerNote'>(logos shown in official form)</span>"
-            "</div></div>", unsafe_allow_html=True)
+st.markdown(
+    """
+<div class="partners">
+  <div class="partnerRow">
+    <div>
+      <div class="partnerLabel">Supported by</div>
+      <div class="partnerNote">Funding and programme acknowledgement</div>
+    </div>
+  </div>
+</div>
+""",
+    unsafe_allow_html=True,
+)
 
-# Place logos in columns to control sizing cleanly
-p1, p2, p3, p4 = st.columns([1.2, 1, 1, 1])
-with p1:
-    st.image(VINNOVA_LOGO_URL, width=220)  # official VINNOVA logo (English)
-with p2:
-    st.markdown("<div class='cardFlat'><b>Mid Sweden University</b><div class='gridSub'>Host organisation</div></div>", unsafe_allow_html=True)
-with p3:
-    st.markdown("<div class='cardFlat'><b>Industry partners</b><div class='gridSub'>To be added</div></div>", unsafe_allow_html=True)
-with p4:
-    st.markdown("<div class='cardFlat'><b>Research networks</b><div class='gridSub'>To be added</div></div>", unsafe_allow_html=True)
+# Two-logo row with balanced sizing
+lcol1, lcol2, lcol3 = st.columns([1.2, 1.2, 2.0])
+with lcol1:
+    st.image(VINNOVA_LOGO_URL, width=240)
+with lcol2:
+    st.image(INTERREG_AURORA_LOGO_URL, width=260)
+with lcol3:
+    st.markdown(
+        "<div class='cardFlat'><b>Note</b><div class='gridSub' style='margin-top:6px;'>"
+        "This hub will list additional partners as new demos are added."
+        "</div></div>",
+        unsafe_allow_html=True,
+    )
 
 # ----------------------------
-# Featured demo (premium)
+# Featured demo
 # ----------------------------
 st.markdown("<div class='sectionTitle'>Featured demo</div>", unsafe_allow_html=True)
 st.markdown("<div class='sectionSub'>The primary live showcase. More demos will be added over time.</div>", unsafe_allow_html=True)
@@ -303,9 +317,9 @@ with right:
     st.markdown(
         """
 <div class="cardFlat">
-  <b>Why visitors like it</b>
+  <b>What you’ll see</b>
   <div class="gridSub" style="margin-top:6px;">
-    Clear story • Interactive exploration • Stakeholder-friendly visuals
+    Robustness views • Practical evaluation • Clear, stakeholder-friendly outputs
   </div>
 </div>
 """,
@@ -317,7 +331,7 @@ with right:
 <div class="cardFlat">
   <b>Future-ready</b>
   <div class="gridSub" style="margin-top:6px;">
-    This page automatically scales into a full demo catalog.
+    Add new demos to <code>DEMOS</code> and this page becomes a catalog automatically.
   </div>
 </div>
 """,
@@ -329,7 +343,7 @@ with right:
 # ----------------------------
 st.markdown("<div id='catalog'></div>", unsafe_allow_html=True)
 st.markdown("<div class='sectionTitle'>Demo catalog</div>", unsafe_allow_html=True)
-st.markdown("<div class='sectionSub'>Use search and tags once you have multiple demos.</div>", unsafe_allow_html=True)
+st.markdown("<div class='sectionSub'>Search and filters become useful when you have multiple demos.</div>", unsafe_allow_html=True)
 
 all_tags = sorted({t for demo in DEMOS for t in demo.tags})
 f1, f2, f3 = st.columns([1.4, 1.2, 1.0])
