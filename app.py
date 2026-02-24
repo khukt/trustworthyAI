@@ -387,6 +387,45 @@ for i, demo in enumerate(filtered):
         )
         st.link_button("Open →", demo.url, use_container_width=True)
 
+
+# ----------------------------
+# Funding acknowledgement (VINNOVA only) — place near bottom
+# ----------------------------
+PROJECT_URL = "https://www.vinnova.se/en/p/trustworthy-ai-and-mobile-generative-ai-for-6g-networks-and-smart-industry-applications/"
+PROJECT_REF = "2024-03570"
+
+st.markdown(
+    """
+    <div style="margin-top:42px; padding-top:18px; border-top:1px solid rgba(148,163,184,0.22);">
+      <div style="text-align:center;">
+        <div style="font-weight:800; color: rgba(15,23,42,1); font-size:1.0rem;">
+          Funding acknowledgement
+        </div>
+        <div style="margin-top:6px; color: rgba(100,116,139,1); font-size:0.92rem;">
+          This demo hub is supported by VINNOVA (Sweden’s Innovation Agency). Project reference: <b>2024-03570</b>.
+        </div>
+      </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+# Centered logo (no card, no border)
+c1, c2, c3 = st.columns([1, 2, 1])
+with c2:
+    st.image(VINNOVA_LOGO_URL, width=320)
+
+st.markdown(
+    f"""
+    <div style="text-align:center; margin-top:10px; font-size:0.88rem; color: rgba(100,116,139,1);">
+      <a href="{PROJECT_URL}" target="_blank" style="color: rgba(15,23,42,1); font-weight:700; text-decoration:none;">
+        View the official VINNOVA project page →
+      </a>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
 # ----------------------------
 # Footer
 # ----------------------------
