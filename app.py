@@ -1,4 +1,6 @@
 import streamlit as st
+from dataclasses import dataclass
+from typing import List, Optional
 
 # ----------------------------
 # Page config
@@ -9,25 +11,56 @@ st.set_page_config(
     layout="wide",
 )
 
-SHOWCASE_URL = "https://wirelesstrustai.streamlit.app/"
+# ----------------------------
+# Data model
+# ----------------------------
+@dataclass
+class Demo:
+    title: str
+    subtitle: str
+    url: str
+    tags: List[str]
+    icon: str = "✨"
+    status: str = "Live"  # Live / Demo / Beta / Coming Soon
+    image_url: Optional[str] = None  # optional
+
 
 # ----------------------------
-# Professional styling
+# Add demos here (future-proof)
+# ----------------------------
+DEMOS: List[Demo] = [
+    Demo(
+        title="Wireless Trust AI",
+        subtitle="Trustworthy AI for wireless systems: robustness, reliability, and practical evaluation views.",
+        url="https://wirelesstrustai.streamlit.app/",
+        tags=["Wireless AI", "6G", "Robustness", "Trustworthiness"],
+        icon="📡",
+        status="Live",
+        image_url=None,
+    ),
+    # Add more later:
+    # Demo(
+    #     title="Your Next Demo",
+    #     subtitle="One-line description of what it demonstrates.",
+    #     url="https://your-next-demo.streamlit.app/",
+    #     tags=["Security", "Transparency"],
+    #     icon="🧠",
+    #     status="Beta",
+    # )
+]
+
+# ----------------------------
+# Styling (professional website look)
 # ----------------------------
 st.markdown(
     """
 <style>
-/* Layout */
 .block-container { padding-top: 1.6rem; padding-bottom: 2.4rem; max-width: 1200px; }
-
-/* Remove extra top gap under header */
 header { visibility: hidden; height: 0px; }
 
-/* Typography */
 h1, h2, h3 { letter-spacing: -0.02em; }
 p, li { color: rgba(71,85,105,1); }
 
-/* Hero */
 .hero {
   border-radius: 22px;
   padding: 34px 34px 28px 34px;
@@ -37,19 +70,9 @@ p, li { color: rgba(71,85,105,1); }
     radial-gradient(900px 450px at 90% 20%, rgba(16,185,129,0.18), transparent 55%),
     linear-gradient(180deg, rgba(2,6,23,0.02), rgba(2,6,23,0.00));
 }
-.hero-title {
-  font-size: 2.4rem;
-  line-height: 1.1;
-  margin: 0 0 10px 0;
-}
-.hero-subtitle {
-  font-size: 1.06rem;
-  margin: 0 0 18px 0;
-  color: rgba(71,85,105,1);
-  max-width: 48rem;
-}
+.hero-title { font-size: 2.4rem; line-height: 1.1; margin: 0 0 10px 0; }
+.hero-subtitle { font-size: 1.06rem; margin: 0 0 18px 0; color: rgba(71,85,105,1); max-width: 52rem; }
 
-/* Pill badges */
 .pills { margin-top: 10px; }
 .pill {
   display: inline-block;
@@ -62,21 +85,40 @@ p, li { color: rgba(71,85,105,1); }
   color: rgba(30,41,59,1);
 }
 
-/* Cards */
 .card {
   border-radius: 18px;
   padding: 18px 18px 14px 18px;
   border: 1px solid rgba(148,163,184,0.25);
   background: rgba(255,255,255,0.70);
 }
-.card h3 { margin: 0 0 6px 0; font-size: 1.05rem; }
-.card p { margin: 0; color: rgba(71,85,105,1); }
+.card h3 { margin: 0 0 6px 0; font-size: 1.08rem; }
+.card p { margin: 0 0 10px 0; color: rgba(71,85,105,1); }
 
-/* Section titles */
-.section-title { margin-top: 8px; margin-bottom: 8px; }
-.section-sub { margin-top: 0px; margin-bottom: 14px; color: rgba(71,85,105,1); }
+.tag {
+  display: inline-block;
+  margin: 0 6px 6px 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(99,102,241,0.10);
+  border: 1px solid rgba(99,102,241,0.22);
+  font-size: 0.82rem;
+}
 
-/* Footer */
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(148,163,184,0.28);
+  background: rgba(148,163,184,0.10);
+  margin-right: 8px;
+  font-size: 0.84rem;
+}
+.badge-live { border-color: rgba(16,185,129,0.35); background: rgba(16,185,129,0.12); }
+.badge-beta { border-color: rgba(245,158,11,0.35); background: rgba(245,158,11,0.12); }
+.badge-demo { border-color: rgba(59,130,246,0.35); background: rgba(59,130,246,0.12); }
+.badge-soon { border-color: rgba(148,163,184,0.35); background: rgba(148,163,184,0.08); }
+
+.small-muted { color: rgba(100,116,139,1); font-size: 0.92rem; }
 .footer {
   margin-top: 30px;
   padding-top: 16px;
@@ -84,23 +126,40 @@ p, li { color: rgba(71,85,105,1); }
   color: rgba(100,116,139,1);
   font-size: 0.92rem;
 }
-
-/* Links */
-a { text-decoration: none !important; }
-.small-muted { color: rgba(100,116,139,1); font-size: 0.92rem; }
 </style>
 """,
     unsafe_allow_html=True,
 )
 
+def status_badge(status: str) -> str:
+    s = status.strip().lower()
+    cls = "badge"
+    if s == "live":
+        cls += " badge-live"
+    elif s == "beta":
+        cls += " badge-beta"
+    elif s == "demo":
+        cls += " badge-demo"
+    else:
+        cls += " badge-soon"
+    return f"<span class='{cls}'>{status}</span>"
+
+
 # ----------------------------
-# Top bar (simple brand header)
+# Top bar
 # ----------------------------
 top_left, top_right = st.columns([3, 1])
 with top_left:
-    st.markdown("**🛡️ Trustworthy AI Showcases**  \n<span class='small-muted'>Interactive demos for robust, transparent, and secure AI</span>", unsafe_allow_html=True)
+    st.markdown(
+        "**🛡️ Trustworthy AI Showcases**  \n"
+        "<span class='small-muted'>A professional hub of interactive demos for robust, transparent, and secure AI</span>",
+        unsafe_allow_html=True,
+    )
+
 with top_right:
-    st.link_button("Open Wireless Trust AI", SHOWCASE_URL, use_container_width=True)
+    # Show the first Live demo as the primary CTA if present
+    primary = next((d for d in DEMOS if d.status.lower() == "live"), DEMOS[0])
+    st.link_button(f"Open {primary.title}", primary.url, use_container_width=True)
 
 st.write("")
 
@@ -108,19 +167,19 @@ st.write("")
 # Hero section
 # ----------------------------
 st.markdown(
-    f"""
+    """
 <div class="hero">
-  <div class="hero-title">A professional hub for <span style="color: rgba(30,58,138,1)">Trustworthy AI</span> demos</div>
+  <div class="hero-title">A curated hub for <span style="color: rgba(30,58,138,1)">Trustworthy AI</span> demos</div>
   <div class="hero-subtitle">
-    Explore a curated interactive showcase focused on reliability, robustness, and practical evaluation —
-    designed to communicate results clearly to both technical and non-technical audiences.
+    Explore interactive showcases focused on reliability, robustness, transparency, and security —
+    presented in a clear, professional format suitable for research, industry, and public stakeholders.
   </div>
   <div class="pills">
-    <span class="pill">📡 Wireless AI</span>
     <span class="pill">🛡️ Robustness</span>
     <span class="pill">🔎 Transparency</span>
     <span class="pill">🔐 Security</span>
     <span class="pill">⚙️ Evaluation</span>
+    <span class="pill">📡 Wireless / 6G</span>
   </div>
 </div>
 """,
@@ -128,94 +187,75 @@ st.markdown(
 )
 
 st.write("")
-cta1, cta2, cta3 = st.columns([1.2, 1.2, 1])
-with cta1:
-    st.link_button("🚀 Launch the showcase", SHOWCASE_URL, use_container_width=True)
-with cta2:
-    st.link_button("🔗 Copy share link", SHOWCASE_URL, use_container_width=True)
-with cta3:
-    st.markdown("<div class='small-muted'>Tip: Pin this page as your main entry point.</div>", unsafe_allow_html=True)
+
+# ----------------------------
+# Filters / search (for multiple demos)
+# ----------------------------
+all_tags = sorted({t for d in DEMOS for t in d.tags})
+f1, f2, f3 = st.columns([1.3, 1.2, 1.0])
+
+with f1:
+    query = st.text_input("Search demos", placeholder="Search by title, tag, status...")
+with f2:
+    tag_filter = st.multiselect("Filter by tags", all_tags, default=[])
+with f3:
+    sort_by = st.selectbox("Sort", ["Featured", "Title A→Z", "Status"], index=0)
+
+def matches(d: Demo) -> bool:
+    if query:
+        q = query.lower()
+        blob = " ".join([d.title, d.subtitle, " ".join(d.tags), d.status]).lower()
+        if q not in blob:
+            return False
+    if tag_filter:
+        if not set(tag_filter).issubset(set(d.tags)):
+            return False
+    return True
+
+filtered = [d for d in DEMOS if matches(d)]
+
+status_rank = {"Live": 0, "Demo": 1, "Beta": 2, "Coming Soon": 3}
+if sort_by == "Title A→Z":
+    filtered.sort(key=lambda x: x.title.lower())
+elif sort_by == "Status":
+    filtered.sort(key=lambda x: status_rank.get(x.status, 99))
 
 st.write("")
 
 # ----------------------------
-# What you'll find (3 cards)
+# Demo grid
 # ----------------------------
-st.markdown("## Overview")
-st.markdown("<div class='section-sub'>A clean, website-like landing page that points users to the live Streamlit demo.</div>", unsafe_allow_html=True)
+st.markdown("## Demos")
+st.markdown("<div class='small-muted'>Click a demo to open it. Add more demos anytime by appending to the DEMOS list.</div>", unsafe_allow_html=True)
 
-c1, c2, c3 = st.columns(3)
-with c1:
-    st.markdown(
-        """
-<div class="card">
-  <h3>Clarity-first presentation</h3>
-  <p>Designed like a professional website: clear value proposition, clean sections, and strong calls-to-action.</p>
-</div>
-""",
-        unsafe_allow_html=True,
-    )
-with c2:
-    st.markdown(
-        """
-<div class="card">
-  <h3>Trustworthiness focus</h3>
-  <p>Highlights robustness, reliability, transparency, and security — without overwhelming visitors with jargon.</p>
-</div>
-""",
-        unsafe_allow_html=True,
-    )
-with c3:
-    st.markdown(
-        """
-<div class="card">
-  <h3>Easy to extend</h3>
-  <p>When you're ready, you can add more showcase URLs and render them as a grid of cards.</p>
-</div>
-""",
-        unsafe_allow_html=True,
-    )
+if not filtered:
+    st.info("No demos match your search/filters.")
+else:
+    cols = st.columns(3)
+    for i, d in enumerate(filtered):
+        with cols[i % 3]:
+            st.markdown("<div class='card'>", unsafe_allow_html=True)
 
-st.write("")
+            if d.image_url:
+                st.image(d.image_url, use_container_width=True)
 
-# ----------------------------
-# Featured showcase section (single)
-# ----------------------------
-st.markdown("## Featured Showcase")
-left, right = st.columns([1.6, 1])
-with left:
-    st.markdown(
-        """
-### 📡 Wireless Trust AI
-A live Streamlit demo showcasing trustworthy AI concepts for wireless systems — with an emphasis on
-practical evaluation, robustness, and decision confidence.
-"""
-    )
-    st.markdown(
-        """
-**Key themes**
-- Robustness under noise and distribution shift  
-- Reliability-oriented evaluation views  
-- Transparent presentation of results and failure modes  
-- Security mindset for model behavior in critical environments  
-"""
-    )
-    st.link_button("Open Wireless Trust AI →", SHOWCASE_URL, use_container_width=True)
+            st.markdown(
+                f"""
+                {status_badge(d.status)}
+                <h3>{d.icon} {d.title}</h3>
+                <p class="small-muted">{d.subtitle}</p>
+                """,
+                unsafe_allow_html=True,
+            )
 
-with right:
-    st.markdown(
-        """
-<div class="card">
-  <h3>Live Demo</h3>
-  <p><b>Status:</b> ✅ Live</p>
-  <p><b>Platform:</b> Streamlit Community Cloud</p>
-  <p><b>Link:</b> <span class="small-muted">wirelesstrustai.streamlit.app</span></p>
-</div>
-""",
-        unsafe_allow_html=True,
-    )
-    st.write("")
-    st.code(SHOWCASE_URL, language=None)
+            tags_html = "".join([f"<span class='tag'>{t}</span>" for t in d.tags])
+            st.markdown(tags_html, unsafe_allow_html=True)
+
+            st.link_button("Open demo →", d.url, use_container_width=True)
+            st.code(d.url, language=None)
+
+            st.markdown("</div>", unsafe_allow_html=True)
+            st.write("")
 
 # ----------------------------
 # Footer
@@ -224,8 +264,8 @@ st.markdown(
     """
 <div class="footer">
   Maintained by Mid Sweden University • Trustworthy AI Demo Hub<br/>
-  <span class="small-muted">© {year} • Contact: kyi.thar@miun.se</span>
+  <span class="small-muted">© 2026 • Contact: kyi.thar@miun.se</span>
 </div>
-""".format(year=2026),
+""",
     unsafe_allow_html=True,
 )
