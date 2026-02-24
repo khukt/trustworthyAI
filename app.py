@@ -404,12 +404,13 @@ st.markdown(
 )
 
 # ----------------------------
-# Footer
+# Footer (personal maintenance)
 # ----------------------------
 st.markdown(
     """
 <div class="footerline">
-  Maintained by Mid Sweden University • Trustworthy AI Demo Hub • Contact: kyi.thar@miun.se
+  © 2026 Kyi Thar • Trustworthy AI Demo Hub<br/>
+  Contact: kyi.thar@miun.se
 </div>
 """,
     unsafe_allow_html=True,
