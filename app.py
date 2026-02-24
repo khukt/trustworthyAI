@@ -329,21 +329,22 @@ with right:
     )
 
 # ----------------------------
-# Catalog (future multi-demo)
+# Catalog (premium list layout)
 # ----------------------------
 st.markdown("<div id='catalog'></div>", unsafe_allow_html=True)
 st.markdown("<div class='sectionTitle'>Demo catalog</div>", unsafe_allow_html=True)
-st.markdown("<div class='sectionSub'>Search and filters become useful when you have multiple demos.</div>", unsafe_allow_html=True)
+st.markdown("<div class='sectionSub'>A growing collection of interactive demos.</div>", unsafe_allow_html=True)
 
-all_tags = sorted({t for demo in DEMOS for t in demo.tags})
-f1, f2, f3 = st.columns([1.4, 1.2, 1.0])
+# Keep search visible, move the rest into an expander (less dashboard-like)
+query = st.text_input("Search", placeholder="Search demos…", label_visibility="collapsed")
 
-with f1:
-    query = st.text_input("Search demos", placeholder="Search by title or keyword…", label_visibility="collapsed")
-with f2:
-    tag_filter = st.multiselect("Filter by tags", all_tags, default=[], label_visibility="collapsed", placeholder="Filter by tags…")
-with f3:
-    sort_by = st.selectbox("Sort", ["Featured", "Title A→Z", "Status"], index=0, label_visibility="collapsed")
+with st.expander("Advanced filters", expanded=False):
+    all_tags = sorted({t for demo in DEMOS for t in demo.tags})
+    f1, f2 = st.columns([1.4, 1.0])
+    with f1:
+        tag_filter = st.multiselect("Filter by tags", all_tags, default=[], placeholder="Filter by tags…")
+    with f2:
+        sort_by = st.selectbox("Sort", ["Featured", "Title A→Z", "Status"], index=0)
 
 def matches(demo: Demo) -> bool:
     if query:
@@ -351,31 +352,76 @@ def matches(demo: Demo) -> bool:
         blob = " ".join([demo.title, demo.subtitle, " ".join(demo.tags), demo.status]).lower()
         if q not in blob:
             return False
-    if tag_filter and not set(tag_filter).issubset(set(demo.tags)):
-        return False
+    if 'tag_filter' in locals() and tag_filter:
+        if not set(tag_filter).issubset(set(demo.tags)):
+            return False
     return True
 
 filtered = [demo for demo in DEMOS if matches(demo)]
-status_rank = {"Live": 0, "Demo": 1, "Beta": 2, "Coming Soon": 3}
-if sort_by == "Title A→Z":
-    filtered.sort(key=lambda x: x.title.lower())
-elif sort_by == "Status":
-    filtered.sort(key=lambda x: status_rank.get(x.status, 99))
 
-cols = st.columns(3)
-for i, demo in enumerate(filtered):
-    with cols[i % 3]:
+status_rank = {"Live": 0, "Demo": 1, "Beta": 2, "Coming Soon": 3}
+if 'sort_by' in locals():
+    if sort_by == "Title A→Z":
+        filtered.sort(key=lambda x: x.title.lower())
+    elif sort_by == "Status":
+        filtered.sort(key=lambda x: status_rank.get(x.status, 99))
+
+if not filtered:
+    st.info("No demos match your search/filters.")
+else:
+    # Premium full-width list cards (website style)
+    for demo in filtered:
+        # status chip
+        status_chip = demo.status
+        status_bg = "rgba(16,185,129,0.12)" if demo.status.lower() == "live" else "rgba(15,23,42,0.06)"
+        status_border = "rgba(16,185,129,0.35)" if demo.status.lower() == "live" else "rgba(148,163,184,0.25)"
+
         st.markdown(
             f"""
-<div class="gridcard">
-  <div class="gridTitle">{demo.icon} {demo.title}</div>
-  <div class="gridSub">{demo.subtitle}</div>
-  <div style="margin-top:10px;">{tags_html(demo.tags)}</div>
+<div style="
+  border-radius: 20px;
+  padding: 16px 18px;
+  border: 1px solid rgba(148,163,184,0.20);
+  background: rgba(255,255,255,0.78);
+  box-shadow: 0 12px 30px rgba(2,6,23,0.06);
+  margin-bottom: 12px;
+">
+  <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap;">
+    <div style="min-width: 260px; flex: 1;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="font-weight:900; color: rgba(15,23,42,1); font-size: 1.05rem;">
+          {demo.icon} {demo.title}
+        </div>
+        <span style="
+          display:inline-block;
+          padding: 5px 10px;
+          border-radius: 999px;
+          font-size: 0.82rem;
+          font-weight: 800;
+          background: {status_bg};
+          border: 1px solid {status_border};
+          color: rgba(15,23,42,1);
+        ">{status_chip}</span>
+      </div>
+
+      <div style="color: rgba(100,116,139,1); font-size: 0.95rem; margin-top: 6px;">
+        {demo.subtitle}
+      </div>
+
+      <div style="margin-top: 10px;">
+        {tags_html(demo.tags)}
+      </div>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:10px;">
+      <a class="btnPrimary" href="{demo.url}" target="_blank">Open demo →</a>
+      <a class="btnSoft" href="{demo.url}" target="_blank" title="Copy / share link">Share</a>
+    </div>
+  </div>
 </div>
 """,
             unsafe_allow_html=True,
         )
-        st.link_button("Open →", demo.url, use_container_width=True)
 
 # ----------------------------
 # Funding acknowledgement (VINNOVA only) — perfectly centered
