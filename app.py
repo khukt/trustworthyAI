@@ -378,28 +378,26 @@ for i, demo in enumerate(filtered):
         st.link_button("Open →", demo.url, use_container_width=True)
 
 # ----------------------------
-# Funding acknowledgement (VINNOVA only) — clean + professional
+# Funding acknowledgement (VINNOVA only) — perfectly centered
 # ----------------------------
 st.markdown(
     f"""
 <div class="fundingWrap">
   <div class="fundingTitle">Funding acknowledgement</div>
   <div class="fundingText">
-    This demo hub is supported by VINNOVA (Sweden’s Innovation Agency). Project reference: <b>{PROJECT_REF}</b>.
+    This demo hub is supported by VINNOVA (Sweden’s Innovation Agency). 
+    Project reference: <b>{PROJECT_REF}</b>.
   </div>
-</div>
-""",
-    unsafe_allow_html=True,
-)
 
-c1, c2, c3 = st.columns([1, 2, 1])
-with c2:
-    st.image(VINNOVA_LOGO_URL, width=320)
+  <div style="text-align:center; margin-top:18px;">
+    <img src="{VINNOVA_LOGO_URL}" style="width:320px; max-width:100%; height:auto;" />
+  </div>
 
-st.markdown(
-    f"""
-<div class="fundingText fundingLink" style="margin-top:10px;">
-  <a href="{PROJECT_URL}" target="_blank">View the official VINNOVA project page →</a>
+  <div class="fundingText fundingLink" style="margin-top:14px;">
+    <a href="{PROJECT_URL}" target="_blank">
+      View the official VINNOVA project page →
+    </a>
+  </div>
 </div>
 """,
     unsafe_allow_html=True,
