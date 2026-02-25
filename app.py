@@ -27,7 +27,7 @@ VINNOVA_LOGO_URL = (
 # KKS (KK-stiftelsen) project + logo
 # ----------------------------
 KKS_URL = "https://www.kks.se/"
-KKS_LOGO_URL = "https://www.kks.se/globalassets/kks-logotypen-standard-en.png"
+KKS_LOGO_URL = "https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8zYVwvMjMxNjAwXC9wcm9qZWN0c1wvMzI5NjQzXC9hc3NldHNcLzYzXC82NDI0MjY1XC9iODhmN2Y5MDdkMTQ0MTJjODgxZjk0MzdjMTM1ODFhNS0xNjQ4NzIxNTAwLnBuZyJ9:frontify:Q0D4l2_6vfsqaiMfn-YmeMLwtvU7PqDgSgsNsf3o9aM"
 
 # ----------------------------
 # Data model
