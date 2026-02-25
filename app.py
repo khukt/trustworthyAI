@@ -24,6 +24,12 @@ VINNOVA_LOGO_URL = (
 )
 
 # ----------------------------
+# KKS (KK-stiftelsen) project + logo
+# ----------------------------
+KKS_URL = "https://www.kks.se/"
+KKS_LOGO_URL = "https://www.kks.se/globalassets/kks-logotypen-standard-en.png"
+
+# ----------------------------
 # Data model
 # ----------------------------
 @dataclass
@@ -417,42 +423,59 @@ else:
         st.markdown(html, unsafe_allow_html=True)
 
 # ----------------------------
-# Funding acknowledgement (VINNOVA only) — centered + cached logo
+# Funding acknowledgement (VINNOVA + KKS) — centered + cached logos
 # ----------------------------
-logo_bytes: Optional[bytes] = None
+vinnova_logo_bytes: Optional[bytes] = None
 try:
-  logo_bytes = fetch_logo_bytes(VINNOVA_LOGO_URL)
+  vinnova_logo_bytes = fetch_logo_bytes(VINNOVA_LOGO_URL)
 except Exception:
-  logo_bytes = None
+  vinnova_logo_bytes = None
+
+kks_logo_bytes: Optional[bytes] = None
+try:
+  kks_logo_bytes = fetch_logo_bytes(KKS_LOGO_URL)
+except Exception:
+  kks_logo_bytes = None
 
 st.markdown(
     f"""
 <div class="fundingWrap">
   <div class="fundingTitle">Funding acknowledgement</div>
   <div class="fundingText">
-    This demo hub is supported by VINNOVA (Sweden’s Innovation Agency).
-    Project reference: <b>{PROJECT_REF}</b>.
+    This demo hub is supported by <b>VINNOVA</b> (Sweden's Innovation Agency),
+    Project reference: <b>{PROJECT_REF}</b>, and by <b>KK-stiftelsen</b> (The Knowledge Foundation).
   </div>
 </div>
 """,
     unsafe_allow_html=True,
 )
 
-st.markdown("<div style='text-align:center; margin-top:18px;'>", unsafe_allow_html=True)
-if logo_bytes:
-  st.image(logo_bytes, width=320)
-else:
-  st.image(VINNOVA_LOGO_URL, width=320)
-st.markdown("</div>", unsafe_allow_html=True)
+col_v, col_k = st.columns(2)
+with col_v:
+    st.markdown("<div style='text-align:center; margin-top:18px;'>", unsafe_allow_html=True)
+    if vinnova_logo_bytes:
+        st.image(vinnova_logo_bytes, width=280)
+    else:
+        st.image(VINNOVA_LOGO_URL, width=280)
+    st.markdown(
+        f"<div class='fundingText fundingLink' style='margin-top:8px;'>"
+        f"<a href='{PROJECT_URL}' target='_blank'>View VINNOVA project page →</a></div>",
+        unsafe_allow_html=True,
+    )
+    st.markdown("</div>", unsafe_allow_html=True)
 
-st.markdown(
-    f"""
-<div class="fundingText fundingLink" style="margin-top:14px;">
-  <a href="{PROJECT_URL}" target="_blank">View the official VINNOVA project page →</a>
-</div>
-""",
-    unsafe_allow_html=True,
-)
+with col_k:
+    st.markdown("<div style='text-align:center; margin-top:18px;'>", unsafe_allow_html=True)
+    if kks_logo_bytes:
+        st.image(kks_logo_bytes, width=280)
+    else:
+        st.image(KKS_LOGO_URL, width=280)
+    st.markdown(
+        f"<div class='fundingText fundingLink' style='margin-top:8px;'>"
+        f"<a href='{KKS_URL}' target='_blank'>View KKS website →</a></div>",
+        unsafe_allow_html=True,
+    )
+    st.markdown("</div>", unsafe_allow_html=True)
 
 # ----------------------------
 # Footer (maintained by you)
