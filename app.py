@@ -46,7 +46,7 @@ class Demo:
 
 DEMOS: List[Demo] = [
   Demo(
-    title="What is Trustorthy AI",
+    title="What is Trustorthy AI ?",
     subtitle="Interactive explainability demo for trustworthy AI, focused on transparent and interpretable model behavior.",
     url="https://trustaiexplain.streamlit.app/",
     tags=["Explainability", "Trustworthy AI", "Transparency"],
