@@ -271,8 +271,9 @@ st.markdown(
 <div class="hero">
   <h1>Trustworthy AI — explained through interactive demos</h1>
   <p>
-    A research-lab style showcase hub: clean storytelling, premium visuals, and stakeholder-friendly navigation.
-    Built to scale from one demo today to many demos tomorrow.
+    Trustworthy AI refers to intelligent systems that are robust under uncertainty, transparent in their decision-making,
+    secure against manipulation, and reliable in mission-critical environments.
+    This interactive showcase translates these principles into practical evaluation frameworks for next-generation wireless and industrial AI systems.
   </p>
   <div class="pills">
     <span class="pill">🛡️ Robustness</span>
