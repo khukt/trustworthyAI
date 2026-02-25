@@ -28,7 +28,7 @@ VINNOVA_LOGO_URL = (
 # KKS (KK-stiftelsen) project + logo
 # ----------------------------
 KKS_URL = "https://www.kks.se/"
-KKS_LOGO_URL = "https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8zYVwvMjMxNjAwXC9wcm9qZWN0c1wvMzI5NjQzXC9hc3NldHNcLzY4XC82NDI3MTMxXC8xMDViMjlhNjRlZTkyNDhmZjljZTFhY2M2MzIyN2JmZi0xNjQ4Nzk2NDM1LnBuZyJ9:frontify:UwA956mBpIj76Iqr95OIrjj07Wb0ztxt1lHlwfBpH8Y"
+KKS_LOGO_URL = "https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8zYVwvMjMxNjAwXC9wcm9qZWN0c1wvMzI5NjQzXC9hc3NldHNcLzYzXC82NDI0MjY1XC9iODhmN2Y5MDdkMTQ0MTJjODgxZjk0MzdjMTM1ODFhNS0xNjQ4NzIxNTAwLnBuZyJ9:frontify:Q0D4l2_6vfsqaiMfn-YmeMLwtvU7PqDgSgsNsf3o9aM"
 
 # ----------------------------
 # Data model
@@ -45,6 +45,14 @@ class Demo:
 
 
 DEMOS: List[Demo] = [
+  Demo(
+    title="TrustAI Explain",
+    subtitle="Interactive explainability demo for trustworthy AI, focused on transparent and interpretable model behavior.",
+    url="https://trustaiexplain.streamlit.app/",
+    tags=["Explainability", "Trustworthy AI", "Transparency"],
+    icon="🧠",
+    status="Live",
+  ),
     Demo(
         title="Wireless Trust AI",
         subtitle="Trustworthy AI for wireless systems — robustness, reliability, and practical evaluation views.",
