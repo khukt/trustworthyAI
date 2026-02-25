@@ -418,6 +418,7 @@ else:
               </div>
             </div>
             """
+            st.markdown(html, unsafe_allow_html=True)
         )
 
 # ----------------------------
