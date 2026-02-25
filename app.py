@@ -1,6 +1,7 @@
 import streamlit as st
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Optional, Tuple
+import requests
 
 # ----------------------------
 # Page config
@@ -12,7 +13,7 @@ st.set_page_config(
 )
 
 # ----------------------------
-# Project + logo (VINNOVA only)
+# VINNOVA project + logo (public page)
 # ----------------------------
 PROJECT_URL = "https://www.vinnova.se/en/p/trustworthy-ai-and-mobile-generative-ai-for-6g-networks-and-smart-industry-applications/"
 PROJECT_REF = "2024-03570"
@@ -35,9 +36,6 @@ class Demo:
     image_url: Optional[str] = None
 
 
-# ----------------------------
-# Demos (add more later)
-# ----------------------------
 DEMOS: List[Demo] = [
     Demo(
         title="Wireless Trust AI",
@@ -52,27 +50,61 @@ DEMOS: List[Demo] = [
 primary = next((d for d in DEMOS if d.status.lower() == "live"), DEMOS[0])
 
 # ----------------------------
-# Premium styling (Apple-like + Research Lab)
+# Caching helpers (speed)
+# ----------------------------
+@st.cache_data(show_spinner=False)
+def get_all_tags(demos: List[Demo]) -> List[str]:
+    return sorted({t for d in demos for t in d.tags})
+
+@st.cache_data(show_spinner=False)
+def filter_demos(demos: List[Demo], query: str, tag_filter: Tuple[str, ...], sort_by: str) -> List[Demo]:
+    q = (query or "").strip().lower()
+    tf = set(tag_filter) if tag_filter else set()
+
+    def matches(d: Demo) -> bool:
+        if q:
+            blob = " ".join([d.title, d.subtitle, " ".join(d.tags), d.status]).lower()
+            if q not in blob:
+                return False
+        if tf and not tf.issubset(set(d.tags)):
+            return False
+        return True
+
+    out = [d for d in demos if matches(d)]
+
+    status_rank = {"Live": 0, "Demo": 1, "Beta": 2, "Coming Soon": 3}
+    if sort_by == "Title A→Z":
+        out.sort(key=lambda x: x.title.lower())
+    elif sort_by == "Status":
+        out.sort(key=lambda x: status_rank.get(x.status, 99))
+
+    return out
+
+@st.cache_data(show_spinner=False)
+def fetch_logo_bytes(url: str) -> bytes:
+    # Cache the remote logo once per Streamlit container
+    r = requests.get(url, timeout=15)
+    r.raise_for_status()
+    return r.content
+
+# ----------------------------
+# Premium styling (same as before)
 # ----------------------------
 st.markdown(
     """
 <style>
-/* Layout */
-.block-container { max-width: 1180px; padding-top: 1.0rem; padding-bottom: 2.6rem; }
+.block-container { max-width: 1180px; padding-top: 1.0rem; padding-bottom: 2.3rem; }
 header, footer, #MainMenu { visibility: hidden; height: 0px; }
 
-/* Typography */
 html, body, [class*="css"] { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
 h1, h2, h3 { letter-spacing: -0.03em; }
 p { color: rgba(71,85,105,1); }
 
-/* Top nav */
 .navbar { display:flex; align-items:center; justify-content:space-between; padding: 6px 0 18px 0; }
 .brand { display:flex; gap:10px; align-items:center; }
 .brand-title { font-weight: 850; font-size: 1.05rem; color: rgba(15,23,42,1); }
 .brand-sub { font-size: 0.92rem; color: rgba(100,116,139,1); margin-top: 1px; }
 
-/* Buttons (HTML) */
 a.btnPrimary {
   display:inline-flex; align-items:center; justify-content:center;
   padding: 10px 14px; border-radius: 12px;
@@ -93,7 +125,6 @@ a.btnSoft {
 }
 a.btnSoft:hover { background: rgba(15,23,42,0.06); }
 
-/* Hero */
 .hero {
   border-radius: 24px;
   padding: 38px 36px 30px 36px;
@@ -117,11 +148,9 @@ a.btnSoft:hover { background: rgba(15,23,42,0.06); }
   font-size: 0.88rem;
 }
 
-/* Section */
-.sectionTitle { margin-top: 30px; margin-bottom: 8px; font-size: 1.35rem; font-weight: 880; color: rgba(15,23,42,1); }
+.sectionTitle { margin-top: 28px; margin-bottom: 8px; font-size: 1.35rem; font-weight: 880; color: rgba(15,23,42,1); }
 .sectionSub { margin-top: 0; margin-bottom: 14px; color: rgba(100,116,139,1); }
 
-/* Cards */
 .card {
   border-radius: 20px;
   padding: 18px 18px 16px 18px;
@@ -136,7 +165,6 @@ a.btnSoft:hover { background: rgba(15,23,42,0.06); }
   background: rgba(255,255,255,0.78);
 }
 
-/* Featured */
 .badgeLive {
   display:inline-block;
   padding: 6px 12px;
@@ -149,16 +177,15 @@ a.btnSoft:hover { background: rgba(15,23,42,0.06); }
 }
 .tag {
   display:inline-block;
-  padding: 5px 10px;
+  padding: 4px 9px;
   border-radius: 999px;
   margin: 8px 8px 0 0;
-  background: rgba(99,102,241,0.10);
-  border: 1px solid rgba(99,102,241,0.18);
-  font-size: 0.82rem;
+  background: rgba(99,102,241,0.08);
+  border: 1px solid rgba(99,102,241,0.14);
+  font-size: 0.80rem;
   color: rgba(30,41,59,1);
 }
 
-/* Metrics */
 .metric {
   border-radius: 18px;
   padding: 14px 14px 12px 14px;
@@ -168,51 +195,19 @@ a.btnSoft:hover { background: rgba(15,23,42,0.06); }
 .metricK { font-weight: 900; color: rgba(15,23,42,1); font-size: 1.05rem; }
 .metricV { color: rgba(100,116,139,1); font-size: 0.92rem; margin-top: 2px; }
 
-/* Demo grid */
-.gridcard {
-  border-radius: 18px;
-  padding: 16px;
-  border: 1px solid rgba(148,163,184,0.20);
-  background: rgba(255,255,255,0.74);
-  transition: transform 140ms ease, box-shadow 140ms ease;
-}
-.gridcard:hover { transform: translateY(-2px); box-shadow: 0 16px 38px rgba(2,6,23,0.08); }
-.gridTitle { font-weight: 900; color: rgba(15,23,42,1); }
-.gridSub { color: rgba(100,116,139,1); font-size: 0.92rem; margin-top: 4px; }
-
-/* Funding block (clean, neutral, no "card UI") */
-.fundingWrap {
-  margin-top: 46px;
-  padding-top: 18px;
-  border-top: 1px solid rgba(148,163,184,0.22);
-}
-.fundingTitle {
-  text-align: center;
-  font-weight: 880;
-  color: rgba(15,23,42,1);
-  font-size: 1.02rem;
-}
-.fundingText {
-  text-align: center;
-  margin-top: 6px;
-  color: rgba(100,116,139,1);
-  font-size: 0.92rem;
-}
-.fundingLink a {
-  color: rgba(15,23,42,1);
-  font-weight: 800;
-  text-decoration: none !important;
-}
+.fundingWrap { margin-top: 40px; padding-top: 18px; border-top: 1px solid rgba(148,163,184,0.22); }
+.fundingTitle { text-align:center; font-weight: 880; color: rgba(15,23,42,1); font-size: 1.02rem; }
+.fundingText { text-align:center; margin-top:6px; color: rgba(100,116,139,1); font-size: 0.92rem; }
+.fundingLink a { color: rgba(15,23,42,1); font-weight: 800; text-decoration: none !important; }
 .fundingLink a:hover { opacity: 0.92; }
 
-/* Footer */
 .footerline {
-  margin-top: 26px;
+  margin-top: 22px;
   padding-top: 14px;
   border-top: 1px solid rgba(148,163,184,0.18);
   color: rgba(100,116,139,1);
   font-size: 0.92rem;
-  text-align: center;
+  text-align:center;
 }
 </style>
 """,
@@ -268,7 +263,7 @@ st.markdown(
 )
 
 # ----------------------------
-# Metrics strip
+# Metrics
 # ----------------------------
 st.markdown("<div class='sectionTitle'>At a glance</div>", unsafe_allow_html=True)
 m1, m2, m3, m4 = st.columns(4)
@@ -308,71 +303,57 @@ with right:
         """
 <div class="cardFlat">
   <b>What you’ll see</b>
-  <div class="gridSub" style="margin-top:6px;">
+  <div style="margin-top:6px; color: rgba(100,116,139,1); font-size:0.92rem;">
     Robustness views • Practical evaluation • Clear, stakeholder-friendly outputs
   </div>
 </div>
 """,
         unsafe_allow_html=True,
     )
-    st.write("")
-    st.markdown(
-        """
-<div class="cardFlat">
-  <b>Future-ready</b>
-  <div class="gridSub" style="margin-top:6px;">
-    Add new demos to <code>DEMOS</code> and this page becomes a catalog automatically.
-  </div>
-</div>
-""",
-        unsafe_allow_html=True,
-    )
 
 # ----------------------------
-# Catalog (premium list layout)
+# Catalog (fast + premium list)
 # ----------------------------
 st.markdown("<div id='catalog'></div>", unsafe_allow_html=True)
 st.markdown("<div class='sectionTitle'>Demo catalog</div>", unsafe_allow_html=True)
-st.markdown("<div class='sectionSub'>A growing collection of interactive demos.</div>", unsafe_allow_html=True)
+st.markdown("<div class='sectionSub'>Search and open demos (filters are optional).</div>", unsafe_allow_html=True)
 
-# Keep search visible, move the rest into an expander (less dashboard-like)
-query = st.text_input("Search", placeholder="Search demos…", label_visibility="collapsed")
+# Use session state for stable UX
+if "catalog_query" not in st.session_state:
+    st.session_state.catalog_query = ""
+if "catalog_tags" not in st.session_state:
+    st.session_state.catalog_tags = []
+if "catalog_sort" not in st.session_state:
+    st.session_state.catalog_sort = "Featured"
+
+# Search form avoids rerun per keypress
+with st.form("catalog_search", clear_on_submit=False):
+    q = st.text_input("Search", value=st.session_state.catalog_query, placeholder="Search demos…", label_visibility="collapsed")
+    submitted = st.form_submit_button("Search")
+
+if submitted:
+    st.session_state.catalog_query = q
 
 with st.expander("Advanced filters", expanded=False):
-    all_tags = sorted({t for demo in DEMOS for t in demo.tags})
-    f1, f2 = st.columns([1.4, 1.0])
-    with f1:
-        tag_filter = st.multiselect("Filter by tags", all_tags, default=[], placeholder="Filter by tags…")
-    with f2:
-        sort_by = st.selectbox("Sort", ["Featured", "Title A→Z", "Status"], index=0)
+    all_tags = get_all_tags(DEMOS)
+    t = st.multiselect("Filter by tags", all_tags, default=st.session_state.catalog_tags, placeholder="Filter by tags…")
+    s = st.selectbox("Sort", ["Featured", "Title A→Z", "Status"], index=["Featured", "Title A→Z", "Status"].index(st.session_state.catalog_sort))
+    apply_filters = st.button("Apply filters")
+    if apply_filters:
+        st.session_state.catalog_tags = t
+        st.session_state.catalog_sort = s
 
-def matches(demo: Demo) -> bool:
-    if query:
-        q = query.lower()
-        blob = " ".join([demo.title, demo.subtitle, " ".join(demo.tags), demo.status]).lower()
-        if q not in blob:
-            return False
-    if 'tag_filter' in locals() and tag_filter:
-        if not set(tag_filter).issubset(set(demo.tags)):
-            return False
-    return True
-
-filtered = [demo for demo in DEMOS if matches(demo)]
-
-status_rank = {"Live": 0, "Demo": 1, "Beta": 2, "Coming Soon": 3}
-if 'sort_by' in locals():
-    if sort_by == "Title A→Z":
-        filtered.sort(key=lambda x: x.title.lower())
-    elif sort_by == "Status":
-        filtered.sort(key=lambda x: status_rank.get(x.status, 99))
+filtered = filter_demos(
+    DEMOS,
+    st.session_state.catalog_query,
+    tuple(st.session_state.catalog_tags),
+    st.session_state.catalog_sort,
+)
 
 if not filtered:
     st.info("No demos match your search/filters.")
 else:
-    # Premium full-width list cards (website style)
     for demo in filtered:
-        # status chip
-        status_chip = demo.status
         status_bg = "rgba(16,185,129,0.12)" if demo.status.lower() == "live" else "rgba(15,23,42,0.06)"
         status_border = "rgba(16,185,129,0.35)" if demo.status.lower() == "live" else "rgba(148,163,184,0.25)"
 
@@ -401,7 +382,7 @@ else:
           background: {status_bg};
           border: 1px solid {status_border};
           color: rgba(15,23,42,1);
-        ">{status_chip}</span>
+        ">{demo.status}</span>
       </div>
 
       <div style="color: rgba(100,116,139,1); font-size: 0.95rem; margin-top: 6px;">
@@ -415,7 +396,7 @@ else:
 
     <div style="display:flex; align-items:center; gap:10px;">
       <a class="btnPrimary" href="{demo.url}" target="_blank">Open demo →</a>
-      <a class="btnSoft" href="{demo.url}" target="_blank" title="Copy / share link">Share</a>
+      <a class="btnSoft" href="{demo.url}" target="_blank">Share</a>
     </div>
   </div>
 </div>
@@ -424,39 +405,43 @@ else:
         )
 
 # ----------------------------
-# Funding acknowledgement (VINNOVA only) — perfectly centered
+# Funding acknowledgement (VINNOVA only) — centered + cached logo
 # ----------------------------
+logo_bytes = fetch_logo_bytes(VINNOVA_LOGO_URL)
+
 st.markdown(
     f"""
 <div class="fundingWrap">
   <div class="fundingTitle">Funding acknowledgement</div>
   <div class="fundingText">
-    This demo hub is supported by VINNOVA (Sweden’s Innovation Agency). 
+    This demo hub is supported by VINNOVA (Sweden’s Innovation Agency).
     Project reference: <b>{PROJECT_REF}</b>.
-  </div>
-
-  <div style="text-align:center; margin-top:18px;">
-    <img src="{VINNOVA_LOGO_URL}" style="width:320px; max-width:100%; height:auto;" />
-  </div>
-
-  <div class="fundingText fundingLink" style="margin-top:14px;">
-    <a href="{PROJECT_URL}" target="_blank">
-      View the official VINNOVA project page →
-    </a>
   </div>
 </div>
 """,
     unsafe_allow_html=True,
 )
 
+st.markdown("<div style='text-align:center; margin-top:18px;'>", unsafe_allow_html=True)
+st.image(logo_bytes, width=320)
+st.markdown("</div>", unsafe_allow_html=True)
+
+st.markdown(
+    f"""
+<div class="fundingText fundingLink" style="margin-top:14px;">
+  <a href="{PROJECT_URL}" target="_blank">View the official VINNOVA project page →</a>
+</div>
+""",
+    unsafe_allow_html=True,
+)
+
 # ----------------------------
-# Footer (personal maintenance)
+# Footer (maintained by you)
 # ----------------------------
 st.markdown(
     """
 <div class="footerline">
-  © 2026 Kyi Thar • Trustworthy AI Demo Hub<br/>
-  Contact: kyi.thar@miun.se
+  Trustworthy AI Demo Hub — Developed and maintained by Kyi Thar • Contact: kyi.thar@miun.se
 </div>
 """,
     unsafe_allow_html=True,
