@@ -32,6 +32,12 @@ KKS_URL = "https://www.kks.se/"
 KKS_LOGO_URL = "https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8zYVwvMjMxNjAwXC9wcm9qZWN0c1wvMzI5NjQzXC9hc3NldHNcLzYzXC82NDI0MjY1XC9iODhmN2Y5MDdkMTQ0MTJjODgxZjk0MzdjMTM1ODFhNS0xNjQ4NzIxNTAwLnBuZyJ9:frontify:Q0D4l2_6vfsqaiMfn-YmeMLwtvU7PqDgSgsNsf3o9aM"
 
 # ----------------------------
+# Interreg Aurora project + logo
+# ----------------------------
+AURORA_URL = "https://www.miun.se/en/Research/research-projects/ongoing-research-projects/trust---enhancing-wireless-communication--sensing-with-secure-resilient-and-trustworthy-solutions/"
+AURORA_LOGO_URL = "https://www.interregaurora.eu/wp-content/uploads/AURORA-RGB-Color-1-1024x308.png"
+
+# ----------------------------
 # Data model
 # ----------------------------
 @dataclass
@@ -459,11 +465,28 @@ a.btnSoft:hover { background: rgba(15,23,42,0.08); transform: translateY(-1px); 
 }
 .fundingLogo.vinnova { height: 100px; }
 .fundingLogo.kks { height: 122px; }
+.fundingLogo.aurora { height: 82px; }
+
+.fundingGrid {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.fundingItem {
+  border: 1px solid rgba(148,163,184,0.20);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.68);
+  padding: 10px 12px 12px 12px;
+}
 
 @media (max-width: 900px) {
+  .fundingGrid { grid-template-columns: 1fr; gap: 10px; }
   .fundingLogoSlot { height: 118px; }
   .fundingLogo.vinnova { height: 84px; }
   .fundingLogo.kks { height: 102px; }
+  .fundingLogo.aurora { height: 70px; }
 }
 
 .footerline {
@@ -753,8 +776,15 @@ try:
 except Exception:
   kks_logo_bytes = None
 
+aurora_logo_bytes: Optional[bytes] = None
+try:
+  aurora_logo_bytes = fetch_logo_bytes(AURORA_LOGO_URL)
+except Exception:
+  aurora_logo_bytes = None
+
 vinnova_logo_src = logo_src(VINNOVA_LOGO_URL, vinnova_logo_bytes)
 kks_logo_src = logo_src(KKS_LOGO_URL, kks_logo_bytes)
+aurora_logo_src = logo_src(AURORA_LOGO_URL, aurora_logo_bytes)
 
 st.markdown(
     f"""
@@ -762,49 +792,45 @@ st.markdown(
   <div class="fundingTitle">Funding acknowledgement</div>
   <div class="fundingText">
     This demo hub is supported by <b>VINNOVA</b> (Sweden's Innovation Agency),
-    Project reference: <b>{PROJECT_REF}</b>, and by <b>KK-stiftelsen</b> (The Knowledge Foundation).
+    Project reference: <b>{PROJECT_REF}</b>, by <b>KK-stiftelsen</b> (The Knowledge Foundation),
+    and by <b>Interreg Aurora</b>.
   </div>
 </div>
 """,
     unsafe_allow_html=True,
 )
-
-col_v, col_k = st.columns(2)
-with col_v:
-  st.markdown("<div style='text-align:center; margin-top:18px;'>", unsafe_allow_html=True)
-  _lv, _cv, _rv = st.columns([1, 3, 1])
-  with _cv:
-    render_html(
-      f"""
-      <div class="fundingLogoSlot">
-        <img class="fundingLogo vinnova" src="{vinnova_logo_src}" alt="VINNOVA logo" />
+render_html(
+    f"""
+    <div class="fundingGrid">
+      <div class="fundingItem">
+        <div class="fundingLogoSlot">
+          <img class="fundingLogo vinnova" src="{vinnova_logo_src}" alt="VINNOVA logo" />
+        </div>
+        <div class='fundingText fundingLink' style='margin-top:8px;'>
+          <a href='{PROJECT_URL}' target='_blank'>View VINNOVA project page →</a>
+        </div>
       </div>
-      """
-    )
-    st.markdown(
-        f"<div class='fundingText fundingLink' style='margin-top:8px;'>"
-        f"<a href='{PROJECT_URL}' target='_blank'>View VINNOVA project page →</a></div>",
-        unsafe_allow_html=True,
-    )
-    st.markdown("</div>", unsafe_allow_html=True)
 
-with col_k:
-  st.markdown("<div style='text-align:center; margin-top:18px;'>", unsafe_allow_html=True)
-  _lk, _ck, _rk = st.columns([1, 3, 1])
-  with _ck:
-    render_html(
-      f"""
-      <div class="fundingLogoSlot">
-        <img class="fundingLogo kks" src="{kks_logo_src}" alt="KKS logo" />
+      <div class="fundingItem">
+        <div class="fundingLogoSlot">
+          <img class="fundingLogo kks" src="{kks_logo_src}" alt="KKS logo" />
+        </div>
+        <div class='fundingText fundingLink' style='margin-top:8px;'>
+          <a href='{KKS_URL}' target='_blank'>View KKS website →</a>
+        </div>
       </div>
-      """
-    )
-    st.markdown(
-        f"<div class='fundingText fundingLink' style='margin-top:8px;'>"
-        f"<a href='{KKS_URL}' target='_blank'>View KKS website →</a></div>",
-        unsafe_allow_html=True,
-    )
-    st.markdown("</div>", unsafe_allow_html=True)
+
+      <div class="fundingItem">
+        <div class="fundingLogoSlot">
+          <img class="fundingLogo aurora" src="{aurora_logo_src}" alt="Interreg Aurora logo" />
+        </div>
+        <div class='fundingText fundingLink' style='margin-top:8px;'>
+          <a href='{AURORA_URL}' target='_blank'>View Interreg Aurora project →</a>
+        </div>
+      </div>
+    </div>
+    """
+)
 
 # ----------------------------
 # Footer (maintained by you)
