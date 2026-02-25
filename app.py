@@ -371,10 +371,10 @@ if not filtered:
     st.info("No demos match your search/filters.")
 else:
     for demo in filtered:
-    status_bg = "rgba(16,185,129,0.12)" if demo.status.lower() == "live" else "rgba(15,23,42,0.06)"
-    status_border = "rgba(16,185,129,0.35)" if demo.status.lower() == "live" else "rgba(148,163,184,0.25)"
+        status_bg = "rgba(16,185,129,0.12)" if demo.status.lower() == "live" else "rgba(15,23,42,0.06)"
+        status_border = "rgba(16,185,129,0.35)" if demo.status.lower() == "live" else "rgba(148,163,184,0.25)"
 
-    html = f"""
+        html = f"""
     <div style="
       border-radius: 20px;
       padding: 18px;
@@ -414,7 +414,7 @@ else:
     </div>
     """
 
-    st.markdown(html, unsafe_allow_html=True)
+        st.markdown(html, unsafe_allow_html=True)
 
 # ----------------------------
 # Funding acknowledgement (VINNOVA only) — centered + cached logo
