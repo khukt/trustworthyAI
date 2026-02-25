@@ -1,6 +1,7 @@
 import streamlit as st
 from dataclasses import dataclass
 from typing import List, Optional, Tuple
+import math
 import requests
 import base64
 from textwrap import dedent
@@ -319,6 +320,51 @@ a.btnSoft:hover { background: rgba(15,23,42,0.08); transform: translateY(-1px); 
   flex-wrap: wrap;
 }
 
+.catalogToolbar {
+  margin: 4px 0 12px 0;
+  color: var(--text-soft);
+  font-size: 0.92rem;
+}
+
+.compactRow {
+  border: 1px solid rgba(148,163,184,0.20);
+  background: rgba(255,255,255,0.92);
+  border-radius: 16px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+
+.compactTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.compactTitle {
+  font-weight: 860;
+  color: var(--text-strong);
+  font-size: 1.03rem;
+}
+
+.compactSubtitle {
+  margin-top: 6px;
+  color: var(--text-soft);
+  font-size: 0.93rem;
+}
+
+.compactTags {
+  margin-top: 8px;
+}
+
+.compactActions {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .metric {
   border-radius: 18px;
   padding: 14px 14px 12px 14px;
@@ -487,6 +533,12 @@ if "catalog_tags" not in st.session_state:
     st.session_state.catalog_tags = []
 if "catalog_sort" not in st.session_state:
     st.session_state.catalog_sort = "Featured"
+if "catalog_view" not in st.session_state:
+  st.session_state.catalog_view = "Compact"
+if "catalog_page_size" not in st.session_state:
+  st.session_state.catalog_page_size = 10
+if "catalog_page" not in st.session_state:
+  st.session_state.catalog_page = 1
 
 # Search form avoids rerun per keypress
 with st.form("catalog_search", clear_on_submit=False):
@@ -515,34 +567,96 @@ filtered = filter_demos(
 if not filtered:
     st.info("No demos match your search/filters.")
 else:
-    for demo in filtered:
+    c_info, c_view, c_size, c_page = st.columns([1.8, 1, 1, 1])
+    with c_info:
+        st.markdown(
+            f"<div class='catalogToolbar'>Showing <b>{len(filtered)}</b> demos</div>",
+            unsafe_allow_html=True,
+        )
+    with c_view:
+        view_mode = st.selectbox(
+            "View",
+            ["Compact", "Cards"],
+            index=["Compact", "Cards"].index(st.session_state.catalog_view),
+        )
+    with c_size:
+        page_size = st.selectbox(
+            "Per page",
+            [10, 20, 50],
+            index=[10, 20, 50].index(st.session_state.catalog_page_size),
+        )
+
+    st.session_state.catalog_view = view_mode
+    st.session_state.catalog_page_size = page_size
+
+    total_pages = max(1, math.ceil(len(filtered) / st.session_state.catalog_page_size))
+    if st.session_state.catalog_page > total_pages:
+        st.session_state.catalog_page = total_pages
+
+    with c_page:
+        st.session_state.catalog_page = int(
+            st.number_input(
+                "Page",
+                min_value=1,
+                max_value=total_pages,
+                value=st.session_state.catalog_page,
+                step=1,
+            )
+        )
+
+    start_idx = (st.session_state.catalog_page - 1) * st.session_state.catalog_page_size
+    end_idx = start_idx + st.session_state.catalog_page_size
+    page_items = filtered[start_idx:end_idx]
+
+    st.markdown(
+        f"<div class='catalogToolbar'>Page <b>{st.session_state.catalog_page}</b> of <b>{total_pages}</b></div>",
+        unsafe_allow_html=True,
+    )
+
+    for demo in page_items:
         status_class = "statusLive" if demo.status.lower() == "live" else "statusNeutral"
 
-        html = f"""
-    <div class="catalogCard">
-      <div class="catalogTop">
-        <div class="catalogTitle">
-          {demo.icon} {demo.title}
+        if st.session_state.catalog_view == "Cards":
+            html = f"""
+        <div class="catalogCard">
+          <div class="catalogTop">
+            <div class="catalogTitle">
+              {demo.icon} {demo.title}
+            </div>
+            <span class="statusBadge {status_class}">
+              {demo.status}
+            </span>
+          </div>
+
+          <div class="catalogSubtitle">
+            {demo.subtitle}
+          </div>
+
+          <div class="catalogTags">
+            {tags_html(demo.tags)}
+          </div>
+
+          <div class="catalogActions">
+            <a class="btnPrimary" href="{demo.url}" target="_blank">Open demo →</a>
+            <a class="btnSoft" href="{demo.url}" target="_blank">Visit page</a>
+          </div>
         </div>
-        <span class="statusBadge {status_class}">
-          {demo.status}
-        </span>
-      </div>
-
-      <div class="catalogSubtitle">
-        {demo.subtitle}
-      </div>
-
-      <div class="catalogTags">
-        {tags_html(demo.tags)}
-      </div>
-
-      <div class="catalogActions">
-        <a class="btnPrimary" href="{demo.url}" target="_blank">Open demo →</a>
-        <a class="btnSoft" href="{demo.url}" target="_blank">Visit page</a>
-      </div>
-    </div>
-    """
+        """
+        else:
+            html = f"""
+        <div class="compactRow">
+          <div class="compactTop">
+            <div class="compactTitle">{demo.icon} {demo.title}</div>
+            <span class="statusBadge {status_class}">{demo.status}</span>
+          </div>
+          <div class="compactSubtitle">{demo.subtitle}</div>
+          <div class="compactTags">{tags_html(demo.tags)}</div>
+          <div class="compactActions">
+            <a class="btnPrimary" href="{demo.url}" target="_blank">Open demo →</a>
+            <a class="btnSoft" href="{demo.url}" target="_blank">Visit page</a>
+          </div>
+        </div>
+        """
 
         st.markdown(html, unsafe_allow_html=True)
 
