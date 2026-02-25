@@ -2,6 +2,7 @@ import streamlit as st
 from dataclasses import dataclass
 from typing import List, Optional, Tuple
 import requests
+from textwrap import dedent
 
 # ----------------------------
 # Page config
@@ -115,6 +116,8 @@ a.btnPrimary {
 }
 a.btnPrimary:hover { opacity: 0.93; }
 
+a.btnPrimary, a.btnSoft { white-space: nowrap; }
+
 a.btnSoft {
   display:inline-flex; align-items:center; justify-content:center;
   padding: 10px 14px; border-radius: 12px;
@@ -157,6 +160,19 @@ a.btnSoft:hover { background: rgba(15,23,42,0.06); }
   border: 1px solid rgba(148,163,184,0.20);
   background: rgba(255,255,255,0.76);
   box-shadow: 0 12px 36px rgba(2,6,23,0.06);
+}
+
+.cardActions {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+@media (max-width: 900px) {
+  .hero h1 { font-size: 2.05rem; }
+  .cardActions { width: 100%; }
+  .cardActions a { flex: 1; text-align: center; }
 }
 .cardFlat {
   border-radius: 18px;
@@ -213,6 +229,9 @@ a.btnSoft:hover { background: rgba(15,23,42,0.06); }
 """,
     unsafe_allow_html=True,
 )
+
+def render_html(html: str) -> None:
+  st.markdown(dedent(html).strip(), unsafe_allow_html=True)
 
 def tags_html(tags: List[str]) -> str:
     return "".join([f"<span class='tag'>{t}</span>" for t in tags])
@@ -284,31 +303,29 @@ st.markdown("<div class='sectionSub'>The primary live showcase. More demos will 
 
 left, right = st.columns([1.7, 1])
 with left:
-    st.markdown(
+    render_html(
         f"""
-<div class="card">
-  <span class="badgeLive">{primary.status}</span>
-  <h2 style="margin:10px 0 6px 0;">{primary.icon} {primary.title}</h2>
-  <p style="margin:0 0 10px 0;">{primary.subtitle}</p>
-  {tags_html(primary.tags)}
-</div>
-""",
-        unsafe_allow_html=True,
+        <div class="card">
+          <span class="badgeLive">{primary.status}</span>
+          <h2 style="margin:10px 0 6px 0;">{primary.icon} {primary.title}</h2>
+          <p style="margin:0 0 10px 0;">{primary.subtitle}</p>
+          {tags_html(primary.tags)}
+        </div>
+        """
     )
 
 with right:
     st.link_button("🚀 Launch demo", primary.url, use_container_width=True)
     st.write("")
-    st.markdown(
+    render_html(
         """
-<div class="cardFlat">
-  <b>What you’ll see</b>
-  <div style="margin-top:6px; color: rgba(100,116,139,1); font-size:0.92rem;">
-    Robustness views • Practical evaluation • Clear, stakeholder-friendly outputs
-  </div>
-</div>
-""",
-        unsafe_allow_html=True,
+        <div class="cardFlat">
+          <b>What you’ll see</b>
+          <div style="margin-top:6px; color: rgba(100,116,139,1); font-size:0.92rem;">
+            Robustness views • Practical evaluation • Clear, stakeholder-friendly outputs
+          </div>
+        </div>
+        """
     )
 
 # ----------------------------
@@ -357,57 +374,60 @@ else:
         status_bg = "rgba(16,185,129,0.12)" if demo.status.lower() == "live" else "rgba(15,23,42,0.06)"
         status_border = "rgba(16,185,129,0.35)" if demo.status.lower() == "live" else "rgba(148,163,184,0.25)"
 
-        st.markdown(
+        render_html(
             f"""
-<div style="
-  border-radius: 20px;
-  padding: 16px 18px;
-  border: 1px solid rgba(148,163,184,0.20);
-  background: rgba(255,255,255,0.78);
-  box-shadow: 0 12px 30px rgba(2,6,23,0.06);
-  margin-bottom: 12px;
-">
-  <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap;">
-    <div style="min-width: 260px; flex: 1;">
-      <div style="display:flex; align-items:center; gap:10px;">
-        <div style="font-weight:900; color: rgba(15,23,42,1); font-size: 1.05rem;">
-          {demo.icon} {demo.title}
-        </div>
-        <span style="
-          display:inline-block;
-          padding: 5px 10px;
-          border-radius: 999px;
-          font-size: 0.82rem;
-          font-weight: 800;
-          background: {status_bg};
-          border: 1px solid {status_border};
-          color: rgba(15,23,42,1);
-        ">{demo.status}</span>
-      </div>
+            <div style="
+              border-radius: 20px;
+              padding: 16px 18px;
+              border: 1px solid rgba(148,163,184,0.20);
+              background: rgba(255,255,255,0.78);
+              box-shadow: 0 12px 30px rgba(2,6,23,0.06);
+              margin-bottom: 12px;
+            ">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap;">
+                <div style="min-width: 260px; flex: 1;">
+                  <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                    <div style="font-weight:900; color: rgba(15,23,42,1); font-size: 1.05rem;">
+                      {demo.icon} {demo.title}
+                    </div>
+                    <span style="
+                      display:inline-block;
+                      padding: 5px 10px;
+                      border-radius: 999px;
+                      font-size: 0.82rem;
+                      font-weight: 800;
+                      background: {status_bg};
+                      border: 1px solid {status_border};
+                      color: rgba(15,23,42,1);
+                    ">{demo.status}</span>
+                  </div>
 
-      <div style="color: rgba(100,116,139,1); font-size: 0.95rem; margin-top: 6px;">
-        {demo.subtitle}
-      </div>
+                  <div style="color: rgba(100,116,139,1); font-size: 0.95rem; margin-top: 6px;">
+                    {demo.subtitle}
+                  </div>
 
-      <div style="margin-top: 10px;">
-        {tags_html(demo.tags)}
-      </div>
-    </div>
+                  <div style="margin-top: 10px;">
+                    {tags_html(demo.tags)}
+                  </div>
+                </div>
 
-    <div style="display:flex; align-items:center; gap:10px;">
-      <a class="btnPrimary" href="{demo.url}" target="_blank">Open demo →</a>
-      <a class="btnSoft" href="{demo.url}" target="_blank">Share</a>
-    </div>
-  </div>
-</div>
-""",
-            unsafe_allow_html=True,
+                <div class="cardActions">
+                  <a class="btnPrimary" href="{demo.url}" target="_blank">Open demo →</a>
+                  <a class="btnSoft" href="{demo.url}" target="_blank">Share</a>
+                </div>
+              </div>
+            </div>
+            """
         )
 
 # ----------------------------
 # Funding acknowledgement (VINNOVA only) — centered + cached logo
 # ----------------------------
-logo_bytes = fetch_logo_bytes(VINNOVA_LOGO_URL)
+logo_bytes: Optional[bytes] = None
+try:
+  logo_bytes = fetch_logo_bytes(VINNOVA_LOGO_URL)
+except Exception:
+  logo_bytes = None
 
 st.markdown(
     f"""
@@ -423,7 +443,10 @@ st.markdown(
 )
 
 st.markdown("<div style='text-align:center; margin-top:18px;'>", unsafe_allow_html=True)
-st.image(logo_bytes, width=320)
+if logo_bytes:
+  st.image(logo_bytes, width=320)
+else:
+  st.image(VINNOVA_LOGO_URL, width=320)
 st.markdown("</div>", unsafe_allow_html=True)
 
 st.markdown(
