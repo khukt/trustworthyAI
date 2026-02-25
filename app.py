@@ -371,55 +371,50 @@ if not filtered:
     st.info("No demos match your search/filters.")
 else:
     for demo in filtered:
-        status_bg = "rgba(16,185,129,0.12)" if demo.status.lower() == "live" else "rgba(15,23,42,0.06)"
-        status_border = "rgba(16,185,129,0.35)" if demo.status.lower() == "live" else "rgba(148,163,184,0.25)"
+    status_bg = "rgba(16,185,129,0.12)" if demo.status.lower() == "live" else "rgba(15,23,42,0.06)"
+    status_border = "rgba(16,185,129,0.35)" if demo.status.lower() == "live" else "rgba(148,163,184,0.25)"
 
-        render_html(
-            f"""
-            <div style="
-              border-radius: 20px;
-              padding: 16px 18px;
-              border: 1px solid rgba(148,163,184,0.20);
-              background: rgba(255,255,255,0.78);
-              box-shadow: 0 12px 30px rgba(2,6,23,0.06);
-              margin-bottom: 12px;
-            ">
-              <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap;">
-                <div style="min-width: 260px; flex: 1;">
-                  <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-                    <div style="font-weight:900; color: rgba(15,23,42,1); font-size: 1.05rem;">
-                      {demo.icon} {demo.title}
-                    </div>
-                    <span style="
-                      display:inline-block;
-                      padding: 5px 10px;
-                      border-radius: 999px;
-                      font-size: 0.82rem;
-                      font-weight: 800;
-                      background: {status_bg};
-                      border: 1px solid {status_border};
-                      color: rgba(15,23,42,1);
-                    ">{demo.status}</span>
-                  </div>
+    html = f"""
+    <div style="
+      border-radius: 20px;
+      padding: 18px;
+      border: 1px solid rgba(148,163,184,0.20);
+      background: rgba(255,255,255,0.90);
+      box-shadow: 0 12px 30px rgba(2,6,23,0.06);
+      margin-bottom: 14px;
+    ">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+        <div style="font-weight:900; font-size:1.1rem; color: rgba(15,23,42,1);">
+          {demo.icon} {demo.title}
+        </div>
+        <span style="
+          padding:5px 10px;
+          border-radius:999px;
+          font-size:0.8rem;
+          font-weight:800;
+          background:{status_bg};
+          border:1px solid {status_border};
+        ">
+          {demo.status}
+        </span>
+      </div>
 
-                  <div style="color: rgba(100,116,139,1); font-size: 0.95rem; margin-top: 6px;">
-                    {demo.subtitle}
-                  </div>
+      <div style="color: rgba(100,116,139,1); margin-top:8px;">
+        {demo.subtitle}
+      </div>
 
-                  <div style="margin-top: 10px;">
-                    {tags_html(demo.tags)}
-                  </div>
-                </div>
+      <div style="margin-top:12px;">
+        {tags_html(demo.tags)}
+      </div>
 
-                <div class="cardActions">
-                  <a class="btnPrimary" href="{demo.url}" target="_blank">Open demo →</a>
-                  <a class="btnSoft" href="{demo.url}" target="_blank">Share</a>
-                </div>
-              </div>
-            </div>
-            """
-            st.markdown(html, unsafe_allow_html=True)
-        )
+      <div style="margin-top:16px; display:flex; gap:10px;">
+        <a class="btnPrimary" href="{demo.url}" target="_blank">Open demo →</a>
+        <a class="btnSoft" href="{demo.url}" target="_blank">Share</a>
+      </div>
+    </div>
+    """
+
+    st.markdown(html, unsafe_allow_html=True)
 
 # ----------------------------
 # Funding acknowledgement (VINNOVA only) — centered + cached logo
