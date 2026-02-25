@@ -317,20 +317,6 @@ st.markdown(
 )
 
 # ----------------------------
-# Metrics
-# ----------------------------
-st.markdown("<div class='sectionTitle'>At a glance</div>", unsafe_allow_html=True)
-m1, m2, m3, m4 = st.columns(4)
-with m1:
-    st.markdown("<div class='metric'><div class='metricK'>Live demos</div><div class='metricV'>Growing showcase catalog</div></div>", unsafe_allow_html=True)
-with m2:
-    st.markdown("<div class='metric'><div class='metricK'>Focus</div><div class='metricV'>Trust • Robustness • Security</div></div>", unsafe_allow_html=True)
-with m3:
-    st.markdown("<div class='metric'><div class='metricK'>Domain</div><div class='metricV'>Wireless / 6G & Smart industry</div></div>", unsafe_allow_html=True)
-with m4:
-    st.markdown("<div class='metric'><div class='metricK'>Format</div><div class='metricV'>Interactive Streamlit apps</div></div>", unsafe_allow_html=True)
-
-# ----------------------------
 # Featured demo
 # ----------------------------
 st.markdown("<div class='sectionTitle'>Featured demo</div>", unsafe_allow_html=True)
