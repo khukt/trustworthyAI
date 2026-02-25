@@ -117,73 +117,116 @@ def fetch_logo_bytes(url: str) -> bytes:
 st.markdown(
     """
 <style>
-.block-container { max-width: 1180px; padding-top: 1.0rem; padding-bottom: 2.3rem; }
+:root {
+  --text-strong: rgba(15,23,42,1);
+  --text-soft: rgba(100,116,139,1);
+  --line-soft: rgba(148,163,184,0.22);
+  --card-bg: rgba(255,255,255,0.82);
+}
+
+.stApp {
+  background:
+    radial-gradient(1000px 520px at 8% -8%, rgba(59,130,246,0.10), transparent 62%),
+    radial-gradient(900px 520px at 92% 8%, rgba(16,185,129,0.10), transparent 58%),
+    linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.block-container { max-width: 1220px; padding-top: 1.4rem; padding-bottom: 2.8rem; }
 header, footer, #MainMenu { visibility: hidden; height: 0px; }
 
 html, body, [class*="css"] { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
 h1, h2, h3 { letter-spacing: -0.03em; }
 p { color: rgba(71,85,105,1); }
 
-.navbar { display:flex; align-items:center; justify-content:space-between; padding: 6px 0 18px 0; }
+.navbar {
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 12px 16px;
+  margin-bottom: 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(148,163,184,0.24);
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 28px rgba(2,6,23,0.05);
+}
 .brand { display:flex; gap:10px; align-items:center; }
-.brand-title { font-weight: 850; font-size: 1.05rem; color: rgba(15,23,42,1); }
+.brand-title { font-weight: 860; font-size: 1.12rem; color: rgba(15,23,42,1); }
 .brand-sub { font-size: 0.92rem; color: rgba(100,116,139,1); margin-top: 1px; }
 
 a.btnPrimary {
   display:inline-flex; align-items:center; justify-content:center;
-  padding: 10px 14px; border-radius: 12px;
+  padding: 11px 16px; border-radius: 14px;
   background: rgba(15,23,42,1);
   border: 1px solid rgba(15,23,42,1);
-  color: white !important; font-weight: 750;
+  color: white !important; font-weight: 780;
   text-decoration: none !important;
+  transition: transform 140ms ease, box-shadow 140ms ease, opacity 140ms ease;
 }
-a.btnPrimary:hover { opacity: 0.93; }
+a.btnPrimary:hover { opacity: 0.95; transform: translateY(-1px); box-shadow: 0 10px 22px rgba(2,6,23,0.16); }
 
 a.btnPrimary, a.btnSoft { white-space: nowrap; }
 
 a.btnSoft {
   display:inline-flex; align-items:center; justify-content:center;
-  padding: 10px 14px; border-radius: 12px;
+  padding: 11px 16px; border-radius: 14px;
   background: rgba(15,23,42,0.04);
   border: 1px solid rgba(148,163,184,0.28);
-  color: rgba(15,23,42,1) !important; font-weight: 750;
+  color: rgba(15,23,42,1) !important; font-weight: 760;
   text-decoration: none !important;
+  transition: transform 140ms ease, background 140ms ease;
 }
-a.btnSoft:hover { background: rgba(15,23,42,0.06); }
+a.btnSoft:hover { background: rgba(15,23,42,0.08); transform: translateY(-1px); }
 
 .hero {
-  border-radius: 24px;
-  padding: 38px 36px 30px 36px;
+  border-radius: 28px;
+  padding: 48px 40px 36px 40px;
   border: 1px solid rgba(148,163,184,0.22);
   background:
-    radial-gradient(1200px 520px at 12% 8%, rgba(59,130,246,0.26), transparent 58%),
-    radial-gradient(900px 560px at 88% 28%, rgba(16,185,129,0.22), transparent 55%),
-    linear-gradient(180deg, rgba(255,255,255,0.78), rgba(255,255,255,0.48));
-  box-shadow: 0 18px 60px rgba(2,6,23,0.08);
+    radial-gradient(1200px 520px at 12% 8%, rgba(59,130,246,0.30), transparent 58%),
+    radial-gradient(900px 560px at 88% 28%, rgba(16,185,129,0.25), transparent 55%),
+    linear-gradient(180deg, rgba(255,255,255,0.86), rgba(255,255,255,0.56));
+  box-shadow: 0 22px 66px rgba(2,6,23,0.11);
 }
-.hero h1 { margin: 0; font-size: 2.7rem; line-height: 1.07; color: rgba(15,23,42,1); }
-.hero p { margin: 12px 0 0 0; font-size: 1.06rem; max-width: 56rem; }
+.hero h1 { margin: 0; font-size: 3.0rem; line-height: 1.03; color: rgba(15,23,42,1); }
+.hero p { margin: 14px 0 0 0; font-size: 1.1rem; line-height: 1.7; max-width: 58rem; }
 
-.pills { margin-top: 18px; display:flex; flex-wrap:wrap; gap:10px; }
+.heroEyebrow {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom: 12px;
+  padding: 7px 13px;
+  border-radius: 999px;
+  background: rgba(15,23,42,0.08);
+  border: 1px solid rgba(148,163,184,0.24);
+  font-size: 0.84rem;
+  color: var(--text-strong);
+  font-weight: 760;
+}
+
+.pills { margin-top: 20px; display:flex; flex-wrap:wrap; gap:10px; }
 .pill {
   display:inline-flex; gap:8px; align-items:center;
-  padding: 7px 12px; border-radius: 999px;
+  padding: 8px 13px; border-radius: 999px;
   background: rgba(15,23,42,0.05);
   border: 1px solid rgba(148,163,184,0.22);
   color: rgba(30,41,59,1);
-  font-size: 0.88rem;
+  font-size: 0.9rem;
+  transition: transform 140ms ease, background 140ms ease;
 }
+.pill:hover { transform: translateY(-1px); background: rgba(15,23,42,0.08); }
 
-.sectionTitle { margin-top: 28px; margin-bottom: 8px; font-size: 1.35rem; font-weight: 880; color: rgba(15,23,42,1); }
-.sectionSub { margin-top: 0; margin-bottom: 14px; color: rgba(100,116,139,1); }
+.sectionTitle { margin-top: 36px; margin-bottom: 10px; font-size: 1.52rem; font-weight: 890; color: rgba(15,23,42,1); }
+.sectionSub { margin-top: 0; margin-bottom: 18px; color: rgba(100,116,139,1); font-size: 0.98rem; }
 
 .card {
-  border-radius: 20px;
-  padding: 18px 18px 16px 18px;
+  border-radius: 22px;
+  padding: 22px 22px 20px 22px;
   border: 1px solid rgba(148,163,184,0.20);
   background: rgba(255,255,255,0.76);
   box-shadow: 0 12px 36px rgba(2,6,23,0.06);
+  transition: transform 150ms ease, box-shadow 150ms ease;
 }
+.card:hover { transform: translateY(-2px); box-shadow: 0 16px 36px rgba(2,6,23,0.08); }
 
 .cardActions {
   display:flex;
@@ -198,17 +241,17 @@ a.btnSoft:hover { background: rgba(15,23,42,0.06); }
   .cardActions a { flex: 1; text-align: center; }
 }
 .cardFlat {
-  border-radius: 18px;
-  padding: 16px;
+  border-radius: 20px;
+  padding: 18px;
   border: 1px solid rgba(148,163,184,0.20);
   background: rgba(255,255,255,0.78);
 }
 
 .badgeLive {
   display:inline-block;
-  padding: 6px 12px;
+  padding: 6px 13px;
   border-radius: 999px;
-  font-size: 0.86rem;
+  font-size: 0.84rem;
   border: 1px solid rgba(16,185,129,0.35);
   background: rgba(16,185,129,0.12);
   color: rgba(15,23,42,1);
@@ -216,13 +259,64 @@ a.btnSoft:hover { background: rgba(15,23,42,0.06); }
 }
 .tag {
   display:inline-block;
-  padding: 4px 9px;
+  padding: 5px 10px;
   border-radius: 999px;
-  margin: 8px 8px 0 0;
+  margin: 10px 8px 0 0;
   background: rgba(99,102,241,0.08);
   border: 1px solid rgba(99,102,241,0.14);
-  font-size: 0.80rem;
+  font-size: 0.81rem;
   color: rgba(30,41,59,1);
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.tag:hover { background: rgba(99,102,241,0.14); border-color: rgba(99,102,241,0.24); }
+
+.catalogCard {
+  border-radius: 22px;
+  padding: 20px;
+  border: 1px solid rgba(148,163,184,0.20);
+  background: rgba(255,255,255,0.90);
+  box-shadow: 0 12px 30px rgba(2,6,23,0.06);
+  margin-bottom: 16px;
+  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+}
+.catalogCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 34px rgba(2,6,23,0.09);
+  border-color: rgba(99,102,241,0.24);
+}
+.catalogTop {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.catalogTitle {
+  font-weight:900;
+  font-size:1.16rem;
+  color: var(--text-strong);
+}
+.statusBadge {
+  padding:5px 10px;
+  border-radius:999px;
+  font-size:0.8rem;
+  font-weight:800;
+}
+.statusLive {
+  background: rgba(16,185,129,0.12);
+  border: 1px solid rgba(16,185,129,0.35);
+}
+.statusNeutral {
+  background: rgba(15,23,42,0.06);
+  border: 1px solid rgba(148,163,184,0.25);
+}
+.catalogSubtitle { color: var(--text-soft); margin-top: 10px; font-size: 0.99rem; line-height: 1.6; }
+.catalogTags { margin-top: 13px; }
+.catalogActions {
+  margin-top: 18px;
+  display:flex;
+  gap:12px;
+  flex-wrap: wrap;
 }
 
 .metric {
@@ -234,9 +328,9 @@ a.btnSoft:hover { background: rgba(15,23,42,0.06); }
 .metricK { font-weight: 900; color: rgba(15,23,42,1); font-size: 1.05rem; }
 .metricV { color: rgba(100,116,139,1); font-size: 0.92rem; margin-top: 2px; }
 
-.fundingWrap { margin-top: 40px; padding-top: 18px; border-top: 1px solid rgba(148,163,184,0.22); }
-.fundingTitle { text-align:center; font-weight: 880; color: rgba(15,23,42,1); font-size: 1.02rem; }
-.fundingText { text-align:center; margin-top:6px; color: rgba(100,116,139,1); font-size: 0.92rem; }
+.fundingWrap { margin-top: 46px; padding-top: 20px; border-top: 1px solid rgba(148,163,184,0.22); }
+.fundingTitle { text-align:center; font-weight: 880; color: rgba(15,23,42,1); font-size: 1.08rem; }
+.fundingText { text-align:center; margin-top:8px; color: rgba(100,116,139,1); font-size: 0.96rem; }
 .fundingLink a { color: rgba(15,23,42,1); font-weight: 800; text-decoration: none !important; }
 .fundingLink a:hover { opacity: 0.92; }
 
@@ -263,12 +357,25 @@ a.btnSoft:hover { background: rgba(15,23,42,0.06); }
 }
 
 .footerline {
-  margin-top: 22px;
+  margin-top: 30px;
   padding-top: 14px;
   border-top: 1px solid rgba(148,163,184,0.18);
   color: rgba(100,116,139,1);
-  font-size: 0.92rem;
+  font-size: 0.94rem;
   text-align:center;
+}
+
+@media (max-width: 900px) {
+  .hero {
+    padding: 34px 24px 26px 24px;
+    border-radius: 22px;
+  }
+  .hero h1 { font-size: 2.3rem; line-height: 1.08; }
+  .hero p { font-size: 1.0rem; line-height: 1.62; }
+  .sectionTitle { margin-top: 28px; font-size: 1.34rem; }
+  .sectionSub { font-size: 0.94rem; }
+  .catalogCard { padding: 16px; }
+  .catalogTitle { font-size: 1.05rem; }
 }
 </style>
 """,
@@ -314,6 +421,7 @@ st.markdown(
 st.markdown(
     """
 <div class="hero">
+  <div class="heroEyebrow">✨ Curated demo hub</div>
   <h1>Trustworthy AI — explained through interactive demos</h1>
   <p>
     Trustworthy AI refers to intelligent systems that are robust under uncertainty, transparent in their decision-making,
@@ -408,45 +516,30 @@ if not filtered:
     st.info("No demos match your search/filters.")
 else:
     for demo in filtered:
-        status_bg = "rgba(16,185,129,0.12)" if demo.status.lower() == "live" else "rgba(15,23,42,0.06)"
-        status_border = "rgba(16,185,129,0.35)" if demo.status.lower() == "live" else "rgba(148,163,184,0.25)"
+        status_class = "statusLive" if demo.status.lower() == "live" else "statusNeutral"
 
         html = f"""
-    <div style="
-      border-radius: 20px;
-      padding: 18px;
-      border: 1px solid rgba(148,163,184,0.20);
-      background: rgba(255,255,255,0.90);
-      box-shadow: 0 12px 30px rgba(2,6,23,0.06);
-      margin-bottom: 14px;
-    ">
-      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
-        <div style="font-weight:900; font-size:1.1rem; color: rgba(15,23,42,1);">
+    <div class="catalogCard">
+      <div class="catalogTop">
+        <div class="catalogTitle">
           {demo.icon} {demo.title}
         </div>
-        <span style="
-          padding:5px 10px;
-          border-radius:999px;
-          font-size:0.8rem;
-          font-weight:800;
-          background:{status_bg};
-          border:1px solid {status_border};
-        ">
+        <span class="statusBadge {status_class}">
           {demo.status}
         </span>
       </div>
 
-      <div style="color: rgba(100,116,139,1); margin-top:8px;">
+      <div class="catalogSubtitle">
         {demo.subtitle}
       </div>
 
-      <div style="margin-top:12px;">
+      <div class="catalogTags">
         {tags_html(demo.tags)}
       </div>
 
-      <div style="margin-top:16px; display:flex; gap:10px;">
+      <div class="catalogActions">
         <a class="btnPrimary" href="{demo.url}" target="_blank">Open demo →</a>
-        <a class="btnSoft" href="{demo.url}" target="_blank">Share</a>
+        <a class="btnSoft" href="{demo.url}" target="_blank">Visit page</a>
       </div>
     </div>
     """
