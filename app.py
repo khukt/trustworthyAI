@@ -252,7 +252,6 @@ st.markdown(
     <div style="font-size:1.25rem;">🛡️</div>
     <div>
       <div class="brand-title">Trustworthy AI Showcases</div>
-      <div class="brand-sub">Modern demo hub • Research & industry ready</div>
     </div>
   </div>
   <div style="display:flex; gap:10px; align-items:center;">
