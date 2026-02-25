@@ -2,6 +2,7 @@ import streamlit as st
 from dataclasses import dataclass
 from typing import List, Optional, Tuple
 import requests
+import base64
 from textwrap import dedent
 
 # ----------------------------
@@ -223,6 +224,28 @@ a.btnSoft:hover { background: rgba(15,23,42,0.06); }
 .fundingLink a { color: rgba(15,23,42,1); font-weight: 800; text-decoration: none !important; }
 .fundingLink a:hover { opacity: 0.92; }
 
+.fundingLogoSlot {
+  margin-top: 18px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fundingLogo {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+.fundingLogo.vinnova { height: 100px; }
+.fundingLogo.kks { height: 122px; }
+
+@media (max-width: 900px) {
+  .fundingLogoSlot { height: 118px; }
+  .fundingLogo.vinnova { height: 84px; }
+  .fundingLogo.kks { height: 102px; }
+}
+
 .footerline {
   margin-top: 22px;
   padding-top: 14px;
@@ -241,6 +264,12 @@ def render_html(html: str) -> None:
 
 def tags_html(tags: List[str]) -> str:
     return "".join([f"<span class='tag'>{t}</span>" for t in tags])
+
+def logo_src(url: str, logo_bytes: Optional[bytes]) -> str:
+  if logo_bytes:
+    b64 = base64.b64encode(logo_bytes).decode("ascii")
+    return f"data:image/png;base64,{b64}"
+  return url
 
 # ----------------------------
 # Navbar
@@ -437,6 +466,9 @@ try:
 except Exception:
   kks_logo_bytes = None
 
+vinnova_logo_src = logo_src(VINNOVA_LOGO_URL, vinnova_logo_bytes)
+kks_logo_src = logo_src(KKS_LOGO_URL, kks_logo_bytes)
+
 st.markdown(
     f"""
 <div class="fundingWrap">
@@ -452,11 +484,16 @@ st.markdown(
 
 col_v, col_k = st.columns(2)
 with col_v:
-    st.markdown("<div style='text-align:center; margin-top:18px;'>", unsafe_allow_html=True)
-    if vinnova_logo_bytes:
-        st.image(vinnova_logo_bytes, width=280)
-    else:
-        st.image(VINNOVA_LOGO_URL, width=280)
+  st.markdown("<div style='text-align:center; margin-top:18px;'>", unsafe_allow_html=True)
+  _lv, _cv, _rv = st.columns([1, 3, 1])
+  with _cv:
+    render_html(
+      f"""
+      <div class="fundingLogoSlot">
+        <img class="fundingLogo vinnova" src="{vinnova_logo_src}" alt="VINNOVA logo" />
+      </div>
+      """
+    )
     st.markdown(
         f"<div class='fundingText fundingLink' style='margin-top:8px;'>"
         f"<a href='{PROJECT_URL}' target='_blank'>View VINNOVA project page →</a></div>",
@@ -465,11 +502,16 @@ with col_v:
     st.markdown("</div>", unsafe_allow_html=True)
 
 with col_k:
-    st.markdown("<div style='text-align:center; margin-top:18px;'>", unsafe_allow_html=True)
-    if kks_logo_bytes:
-        st.image(kks_logo_bytes, width=280)
-    else:
-        st.image(KKS_LOGO_URL, width=280)
+  st.markdown("<div style='text-align:center; margin-top:18px;'>", unsafe_allow_html=True)
+  _lk, _ck, _rk = st.columns([1, 3, 1])
+  with _ck:
+    render_html(
+      f"""
+      <div class="fundingLogoSlot">
+        <img class="fundingLogo kks" src="{kks_logo_src}" alt="KKS logo" />
+      </div>
+      """
+    )
     st.markdown(
         f"<div class='fundingText fundingLink' style='margin-top:8px;'>"
         f"<a href='{KKS_URL}' target='_blank'>View KKS website →</a></div>",
