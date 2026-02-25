@@ -229,6 +229,70 @@ a.btnSoft:hover { background: rgba(15,23,42,0.08); transform: translateY(-1px); 
 }
 .card:hover { transform: translateY(-2px); box-shadow: 0 16px 36px rgba(2,6,23,0.08); }
 
+.featuredCard {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(600px 220px at 12% 8%, rgba(99,102,241,0.10), transparent 62%),
+    linear-gradient(180deg, rgba(255,255,255,0.90), rgba(255,255,255,0.80));
+}
+
+.featuredCard::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle at top right, rgba(16,185,129,0.15), transparent 70%);
+  pointer-events: none;
+}
+
+.featuredKicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 8px;
+  padding: 6px 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(99,102,241,0.24);
+  background: rgba(99,102,241,0.10);
+  color: rgba(30,41,59,1);
+  font-size: 0.8rem;
+  font-weight: 760;
+}
+
+.featuredTitle {
+  margin: 16px 0 8px 0;
+  font-size: 2.9rem;
+  line-height: 1.1;
+  color: var(--text-strong);
+}
+
+.featuredSub {
+  margin: 0 0 10px 0;
+  color: var(--text-soft);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.featuredActions {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.featureList {
+  margin-top: 10px;
+  padding-left: 18px;
+  color: rgba(71,85,105,1);
+}
+
+.featureList li {
+  margin: 7px 0;
+}
+
 .cardActions {
   display:flex;
   align-items:center;
@@ -496,25 +560,39 @@ left, right = st.columns([1.7, 1])
 with left:
     render_html(
         f"""
-        <div class="card">
+        <div class="card featuredCard">
           <span class="badgeLive">{primary.status}</span>
-          <h2 style="margin:10px 0 6px 0;">{primary.icon} {primary.title}</h2>
-          <p style="margin:0 0 10px 0;">{primary.subtitle}</p>
+          <span class="featuredKicker">🌟 Featured now</span>
+          <h2 class="featuredTitle">{primary.icon} {primary.title}</h2>
+          <p class="featuredSub">{primary.subtitle}</p>
           {tags_html(primary.tags)}
+          <div class="featuredActions">
+            <a class="btnPrimary" href="{primary.url}" target="_blank">Launch featured demo →</a>
+            <a class="btnSoft" href="#catalog">Browse all demos</a>
+          </div>
         </div>
         """
     )
 
 with right:
-    st.link_button("🚀 Launch demo", primary.url, use_container_width=True)
-    st.write("")
     render_html(
         """
         <div class="cardFlat">
+          <b>Why this is featured</b>
+          <ul class="featureList">
+            <li>Interactive and intuitive for first-time visitors</li>
+            <li>Demonstrates core Trustworthy AI principles</li>
+            <li>Useful for research, education, and stakeholder communication</li>
+          </ul>
+        </div>
+        <div style="height:12px;"></div>
+        <div class="cardFlat">
           <b>What you’ll see</b>
-          <div style="margin-top:6px; color: rgba(100,116,139,1); font-size:0.92rem;">
-            Robustness views • Practical evaluation • Clear, stakeholder-friendly outputs
-          </div>
+          <ul class="featureList">
+            <li>Transparency and explainability views</li>
+            <li>Practical evaluation workflow</li>
+            <li>Clear outputs for technical and non-technical users</li>
+          </ul>
         </div>
         """
     )
